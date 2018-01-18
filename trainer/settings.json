@@ -1,0 +1,42 @@
+{
+  "train_data": {
+    "location": "./train_data/train/train_data_{}.csv",
+    "begin": 1,
+    "end": 300
+  },
+  
+  "validation_data": {
+    "location": "./train_data/validation/validation_data_{}.csv",
+    "begin": 1,
+    "end": 300
+  },
+  
+  "test_data": {
+    "location": "./train_data/test/test_data_{}.csv",
+    "begin": 1,
+    "end": 300
+  },
+
+  "data_info": {
+    "input_dimension": 10,
+    "num_groups": 10,
+    "num_fragments_per_csv": 100
+  },
+
+  "neural_net_info": {
+    "neural_net_name": "simple_net"
+  },
+
+  "step_info": {
+    "global_step": 10000,
+    "save_step": 1500,
+    "validation_step": 1000,
+    "loss_step": 100
+  },
+
+  "hyperparameters": {
+    "batch_size": 100,
+    "learning_rate": 0.0001,
+    "keep_prob": 0.7
+  }
+}
