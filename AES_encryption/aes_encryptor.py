@@ -32,13 +32,3 @@ class AESEncryptor:
         decryptor = AES.new(key, AES.MODE_CBC, AESEncryptor.initial_vector)
         plain_text = AESEncryptor.unpad(decryptor.decrypt(cipher_text))
         return plain_text
-
-
-# # 32 Byte key
-# key = 'hello, world! Nice to meet you:)'
-# plaintext = "안녕하세요 안녕하세요"
-# ciphertext = AESEncryptor.encrypt(key, plaintext.encode())
-# print(ciphertext)
-#
-# plaintext = AESEncryptor.decrypt(key, ciphertext).decode()
-# print(plaintext)
