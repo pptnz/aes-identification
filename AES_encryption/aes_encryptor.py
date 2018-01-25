@@ -34,11 +34,11 @@ class AESEncryptor:
         return plain_text
 
 
-# 32 Byte key
-key = 'hello, world! Nice to meet you:)'
-plaintext = "안녕하세요 안녕하세요"
-ciphertext = AESEncryptor.encrypt(key, plaintext.encode())
-print(ciphertext)
-
-plaintext = AESEncryptor.decrypt(key, ciphertext).decode()
-print(plaintext)
+# # 32 Byte key
+# key = 'hello, world! Nice to meet you:)'
+# plaintext = "안녕하세요 안녕하세요"
+# ciphertext = AESEncryptor.encrypt(key, plaintext.encode())
+# print(ciphertext)
+#
+# plaintext = AESEncryptor.decrypt(key, ciphertext).decode()
+# print(plaintext)
