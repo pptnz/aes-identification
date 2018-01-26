@@ -32,19 +32,3 @@ class File:
 
         self.file_location = destination
 
-    def split_file(self, fragment_size, filename_format, start_number, directory="./"):
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-        destination_format = os.path.join(directory, filename_format)
-        file_number = start_number
-
-        with open(self.file_location, "rb") as original_file:
-            fragment = original_file.read(fragment_size)
-            while len(fragment) == fragment_size:
-                with open(destination_format.format(file_number), "wb") as destination_file:
-                    destination_file.write(fragment)
-
-                file_number += 1
-                fragment = original_file.read(fragment_size)
-
-        return file_number
