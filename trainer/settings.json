@@ -1,25 +1,25 @@
 {
   "train_data": {
-    "location": "./train_data/train/train_data_{}.csv",
+    "location": "./data/train_data/train_{}.csv",
     "begin": 1,
-    "end": 300
+    "end": 110
   },
-  
+
   "validation_data": {
-    "location": "./train_data/validation/validation_data_{}.csv",
+    "location": "./data/validation_data/validation_{}.csv",
     "begin": 1,
-    "end": 300
+    "end": 22
   },
-  
+
   "test_data": {
-    "location": "./train_data/test/test_data_{}.csv",
+    "location": "./data/test_data/test_{}.csv",
     "begin": 1,
-    "end": 300
+    "end": 48
   },
 
   "data_info": {
-    "input_dimension": 10,
-    "num_groups": 10,
+    "input_dimension": 256,
+    "num_groups": 2,
     "num_fragments_per_csv": 100
   },
 
@@ -29,14 +29,14 @@
 
   "step_info": {
     "global_step": 10000,
-    "save_step": 1500,
-    "validation_step": 1000,
-    "loss_step": 100
+    "save_step": 500,
+    "validation_step": 100,
+    "loss_step": 10
   },
 
   "hyperparameters": {
     "batch_size": 100,
-    "learning_rate": 0.0001,
+    "learning_rate": 0.00005,
     "keep_prob": 0.7
   }
 }

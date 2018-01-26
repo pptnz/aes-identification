@@ -18,22 +18,20 @@ def main():
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
-        num_files = len(os.listdir(directory))
+        files = list(filter(lambda filename: (not filename.startswith(".")) and ("." in filename),
+                            os.listdir(directory)))
+        num_files = len(files)
         files_count = 1
 
         if len(key) == 32:
-            for filename in os.listdir(directory):
-                if filename.startswith("."):
-                    continue
+            for filename in files:
                 file = File(filename, directory=directory)
                 file.encrypt(key, filename + ".encrypted", directory=output_directory)
                 print_progress(files_count, num_files)
                 files_count += 1
 
         else:
-            for filename in os.listdir(directory):
-                if filename.startswith("."):
-                    continue
+            for filename in files:
                 file = File(filename, directory=directory)
                 key = ''.join(random.choices(string.ascii_letters + string.digits + string.punctuation, k=32))
                 file.encrypt(key, filename + ".encrypted", directory=output_directory)
@@ -51,10 +49,12 @@ def main():
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
 
-        num_files = len(os.listdir(directory))
+        files = list(filter(lambda filename: (not filename.startswith(".")) and ("." in filename),
+                            os.listdir(directory)))
+        num_files = len(files)
         files_count = 1
 
-        for filename in os.listdir(directory):
+        for filename in files:
             if filename.startswith("."):
                 continue
             file = File(filename, directory=directory)

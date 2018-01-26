@@ -56,20 +56,20 @@ def main():
 
             # compute data
             bfd1 = [0 for _ in range(256)]
-            bfd2 = [[0 for _ in range(256)] for _ in range(256)]
+            # bfd2 = [[0 for _ in range(256)] for _ in range(256)]
             for i in range(size - 1):
                 bfd1[data[i]] += 1
-                bfd2[data[i]][data[i + 1]] += 1
+                # bfd2[data[i]][data[i + 1]] += 1
             bfd1[data[-1]] += 1
 
             res = ','.join(str(i) for i in bfd1)
-            for row in bfd2:
-                res += ','
-                res += ','.join(str(i) for i in row)
+            # for row in bfd2:
+            #     res += ','
+            #     res += ','.join(str(i) for i in row)
             if group == 0:
-                res += '1,0\n'
+                res += ',1,0'
             else:
-                res += '0,1\n'
+                res += ',0,1'
             csv.write(res)
             csv_row += 1
             if csv_row >= 100:
@@ -77,6 +77,8 @@ def main():
                 num_csv += 1
                 csv.close()
                 csv = open(os.path.join(output_directory, csv_filename.format(num_csv)), "w")
+            else:
+                csv.write('\n')
 
             print_progress(num_files_processed, num_files)
 
@@ -95,17 +97,17 @@ def main():
 
             # compute dataz
             bfd1 = [0 for _ in range(256)]
-            bfd2 = [[0 for _ in range(256)] for _ in range(256)]
+            # bfd2 = [[0 for _ in range(256)] for _ in range(256)]
             for i in range(size - 1):
                 bfd1[data[i]] += 1
-                bfd2[data[i]][data[i + 1]] += 1
+                # bfd2[data[i]][data[i + 1]] += 1
             bfd1[data[-1]] += 1
 
             res = ','.join(str(i) for i in bfd1)
-            for row in bfd2:
-                res += ','
-                res += ','.join(str(i) for i in row)
-            res += '1,0\n'
+            # for row in bfd2:
+            #     res += ','
+            #     res += ','.join(str(i) for i in row)
+            res += ',1,0'
             csv.write(res)
             csv_row += 1
             if csv_row >= 100:
@@ -113,6 +115,8 @@ def main():
                 num_csv += 1
                 csv.close()
                 csv = open(os.path.join(output_directory, csv_filename.format(num_csv)), "w")
+            else:
+                csv.write('\n')
 
             print_progress(num_files_processed, num_files)
         
@@ -120,7 +124,7 @@ def main():
             data = file1.read(size)
             while len(data) != size:
                 file1.close()
-                file1 = open(os.path.join(directory0, files1.pop()), "rb")
+                file1 = open(os.path.join(directory1, files1.pop()), "rb")
                 num_files_processed += 1
                 data = file1.read(size)
                 if len(files1) == 0:
@@ -131,17 +135,17 @@ def main():
 
             # compute dataz
             bfd1 = [0 for _ in range(256)]
-            bfd2 = [[0 for _ in range(256)] for _ in range(256)]
+            # bfd2 = [[0 for _ in range(256)] for _ in range(256)]
             for i in range(size - 1):
                 bfd1[data[i]] += 1
-                bfd2[data[i]][data[i + 1]] += 1
+                # bfd2[data[i]][data[i + 1]] += 1
             bfd1[data[-1]] += 1
 
             res = ','.join(str(i) for i in bfd1)
-            for row in bfd2:
-                res += ','
-                res += ','.join(str(i) for i in row)
-            res += '0,1\n'
+            # for row in bfd2:
+            #     res += ','
+            #     res += ','.join(str(i) for i in row)
+            res += ',0,1'
             csv.write(res)
             csv_row += 1
             if csv_row >= 100:
@@ -149,6 +153,8 @@ def main():
                 num_csv += 1
                 csv.close()
                 csv = open(os.path.join(output_directory, csv_filename.format(num_csv)), "w")
+            else:
+                csv.write('\n')
 
             print_progress(num_files_processed, num_files)
 
@@ -168,17 +174,17 @@ def main():
 
             # compute data
             bfd1 = [0 for _ in range(256)]
-            bfd2 = [[0 for _ in range(256)] for _ in range(256)]
+            # bfd2 = [[0 for _ in range(256)] for _ in range(256)]
             for i in range(size - 1):
                 bfd1[data[i]] += 1
-                bfd2[data[i]][data[i + 1]] += 1
+                # bfd2[data[i]][data[i + 1]] += 1
             bfd1[data[-1]] += 1
 
             res = ','.join(str(i) for i in bfd1)
-            for row in bfd2:
-                res += ','
-                res += ','.join(str(i) for i in row)
-            res += '1,0\n'
+            # for row in bfd2:
+            #     res += ','
+            #     res += ','.join(str(i) for i in row)
+            res += ',1,0'
             csv.write(res)
             csv_row += 1
             if csv_row >= 100:
@@ -186,6 +192,8 @@ def main():
                 num_csv += 1
                 csv.close()
                 csv = open(os.path.join(output_directory, csv_filename.format(num_csv)), "w")
+            else:
+                csv.write('\n')
 
             print_progress(num_files_processed, num_files)
 
@@ -193,7 +201,7 @@ def main():
             data = file1.read(size)
             while len(data) != size:
                 file1.close()
-                file1 = open(os.path.join(directory0, files1.pop()), "rb")
+                file1 = open(os.path.join(directory1, files1.pop()), "rb")
                 num_files_processed += 1
                 data = file1.read(size)
                 if len(files1) == 0:
@@ -204,17 +212,17 @@ def main():
 
             # compute dataz
             bfd1 = [0 for _ in range(256)]
-            bfd2 = [[0 for _ in range(256)] for _ in range(256)]
+            # bfd2 = [[0 for _ in range(256)] for _ in range(256)]
             for i in range(size - 1):
                 bfd1[data[i]] += 1
-                bfd2[data[i]][data[i + 1]] += 1
+                # bfd2[data[i]][data[i + 1]] += 1
             bfd1[data[-1]] += 1
 
             res = ','.join(str(i) for i in bfd1)
-            for row in bfd2:
-                res += ','
-                res += ','.join(str(i) for i in row)
-            res += '0,1\n'
+            # for row in bfd2:
+            #     res += ','
+            #     res += ','.join(str(i) for i in row)
+            res += ',0,1'
             csv.write(res)
             csv_row += 1
             if csv_row >= 100:
@@ -222,6 +230,8 @@ def main():
                 num_csv += 1
                 csv.close()
                 csv = open(os.path.join(output_directory, csv_filename.format(num_csv)), "w")
+            else:
+                csv.write('\n')
 
             print_progress(num_files_processed, num_files)
 
