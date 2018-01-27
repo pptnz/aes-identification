@@ -88,10 +88,16 @@ with tf.Session() as sess:
 
                 progress_bar(step, max_validation_step)
 
-            print("\nValidation Result:")
+            print("\nValidation Result")
+            print("Percentage:")
             for row in accuracy_table:
                 for col in row / np.sum(row) * 100:
                     print("{:>6.2f}%\t".format(col), end="")
+                print()
+            print("\nCount:")
+            for row in accuracy_table:
+                for col in row:
+                    print("{:>8}\t".format(col), end="")
                 print()
 
             correct_count = 0
@@ -116,10 +122,16 @@ with tf.Session() as sess:
 
         progress_bar(step, max_test_step)
 
-    print("\nTesting Result:")
+    print("\nTesting Result")
+    print("Percentage:")
     for row in accuracy_table:
         for col in row / np.sum(row) * 100:
             print("{:>6.2f}%\t".format(col), end="")
+        print()
+    print("\nCount:")
+    for row in accuracy_table:
+        for col in row:
+            print("{:>8}\t".format(col), end="")
         print()
 
     correct_count = 0
