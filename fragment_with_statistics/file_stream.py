@@ -1,12 +1,17 @@
 import os
 from file import File
+from print_progress import print_progress
 
 
 class FileStream:
+    total_files_count = 0
+    current_files_count = 0
+
     def __init__(self, directory="./"):
         self.directory = directory
         self.filename_queue = list(filter(lambda filename: (not filename.startswith(".")) and ("." in filename),
                                           os.listdir(directory)))
+        FileStream.total_files_count += len(self.filename_queue)
         self.file = None
         self.set_to_next_file()
 
@@ -16,6 +21,10 @@ class FileStream:
             return False
 
         self.file = File(self.filename_queue.pop(), self.directory)
+
+        FileStream.current_files_count += 1
+        print_progress(FileStream.current_files_count, FileStream.total_files_count)
+
         return True
 
     def read(self, fragment_size):
