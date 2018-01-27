@@ -1,0 +1,13 @@
+{
+  "files": {
+    "not_encrypted": "../somewhere/",
+    "encrypted": "../somewhere/"
+  },
+
+  "groups": {
+    "not_encrypted": 0,
+    "encrypted": 1
+  },
+
+  "fragment_size": 4096
+}
