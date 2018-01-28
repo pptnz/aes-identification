@@ -1,20 +1,20 @@
 {
   "train_data": {
-    "location": "./data/train_data/train_{}.csv",
+    "location": "./data/train_data/hey_{}.csv",
     "begin": 1,
-    "end": 110
+    "end": 1000
   },
 
   "validation_data": {
-    "location": "./data/validation_data/validation_{}.csv",
+    "location": "./data/validation_data/hey2_{}.csv",
     "begin": 1,
-    "end": 22
+    "end": 100
   },
 
   "test_data": {
-    "location": "./data/test_data/test_{}.csv",
+    "location": "./data/test_data/hey2_{}.csv",
     "begin": 1,
-    "end": 48
+    "end": 100
   },
 
   "data_info": {
@@ -24,19 +24,19 @@
   },
 
   "neural_net_info": {
-    "neural_net_name": "simple_net"
+    "neural_net_name": "cnn_net"
   },
 
   "step_info": {
-    "global_step": 10000,
-    "save_step": 500,
+    "global_step": 50000,
+    "save_step": 10000,
     "validation_step": 100,
     "loss_step": 10
   },
 
   "hyperparameters": {
     "batch_size": 100,
-    "learning_rate": 0.00005,
-    "keep_prob": 0.7
+    "learning_rate": 1e-4,
+    "keep_prob": 0.5
   }
 }
