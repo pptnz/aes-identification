@@ -1,7 +1,7 @@
 {
   "files": {
-    "not_encrypted": "../file_distributor/",
-    "encrypted": "../byte-frequency-distribution/"
+    "not_encrypted": "./test1/",
+    "encrypted": "./test2/"
   },
 
   "groups": {
@@ -12,11 +12,11 @@
   "output": {
     "location": "./somewhere2/",
     "filename": "csv_{}.csv",
-    "fragments_per_csv": 10
+    "fragments_per_csv": 100
   },
 
   "settings": {
     "random": true,
-    "fragment_size": 20
+    "fragment_size": 4096
   }
 }
