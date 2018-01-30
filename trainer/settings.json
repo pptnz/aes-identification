@@ -1,20 +1,20 @@
 {
   "train_data": {
-    "location": "./data/train_data/hey_{}.csv",
+    "location": "/Users/barber/Data/Research/bfd_data/train/train_{}.csv",
     "begin": 1,
-    "end": 1000
+    "end": 128898
   },
 
   "validation_data": {
-    "location": "./data/validation_data/hey2_{}.csv",
+    "location": "/Users/barber/Data/Research/bfd_data/validation/validation_{}.csv",
     "begin": 1,
-    "end": 100
+    "end": 979
   },
 
   "test_data": {
-    "location": "./data/test_data/hey2_{}.csv",
+    "location": "/Users/barber/Data/Research/bfd_data/test/test_{}.csv",
     "begin": 1,
-    "end": 100
+    "end": 34183
   },
 
   "data_info": {
@@ -24,13 +24,13 @@
   },
 
   "neural_net_info": {
-    "neural_net_name": "cnn_net"
+    "neural_net_name": "cnn_pooling"
   },
 
   "step_info": {
-    "global_step": 50000,
+    "global_step": 300000,
     "save_step": 10000,
-    "validation_step": 100,
+    "validation_step": 2000,
     "loss_step": 10
   },
 

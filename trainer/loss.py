@@ -11,4 +11,4 @@ batch_size = settings.read("hyperparameters", "batch_size")
 num_groups = settings.read("data_info", "num_groups")
 
 
-loss = -tf.reduce_sum(answer_tensor * tf.log(neural_net.output_tensor))
+loss = -tf.reduce_sum([1, 1] * answer_tensor * tf.log(neural_net.output_tensor))
