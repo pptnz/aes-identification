@@ -84,7 +84,12 @@ with tf.Session() as sess:
                 answer_value = labels
 
                 for pred, ans in zip(prediction_value, answer_value):
-                    accuracy_table[np.argmax(ans)][np.argmax(pred)] += 1
+                    answer_group = np.argmax(ans)
+                    if pred[1] >= 0.1:
+                        pred_group = 1
+                    else:
+                        pred_group = 0
+                    accuracy_table[answer_group][pred_group] += 1
 
                 progress_bar(step, max_validation_step)
 

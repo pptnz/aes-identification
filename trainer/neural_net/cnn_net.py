@@ -27,6 +27,6 @@ b4 = tf.Variable(tf.truncated_normal([8], stddev=0.1))
 h4 = tf.nn.tanh(tf.matmul(h3_flat, w4) + b4)
 h4_drop = tf.nn.dropout(h4, keep_prob)
 
-w5 = tf.get_variable(name='w5', shape=[8, num_groups], initializer=tf.contrib.keras.initializers.he_normal())
+w5 = tf.Variable(tf.zeros([8, num_groups]))
 b5 = tf.Variable(tf.zeros([num_groups]))
 output_tensor = tf.nn.softmax(tf.matmul(h4_drop, w5) + b5)  # do not change the output tensor name.

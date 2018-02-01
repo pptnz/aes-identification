@@ -24,14 +24,14 @@
   },
 
   "neural_net_info": {
-    "neural_net_name": "cnn_pooling"
+    "neural_net_name": "cnn_net"
   },
 
   "step_info": {
-    "global_step": 300000,
-    "save_step": 10000,
-    "validation_step": 2000,
-    "loss_step": 10
+    "global_step": 200000,
+    "save_step": 5000,
+    "validation_step": 1,
+    "loss_step": 100
   },
 
   "hyperparameters": {
