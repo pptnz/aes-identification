@@ -27,6 +27,10 @@
     "neural_net_name": "cnn_net"
   },
 
+  "decision_info": {
+    "threshold": 0.5
+  },
+
   "step_info": {
     "global_step": 200000,
     "save_step": 5000,

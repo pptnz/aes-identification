@@ -25,6 +25,7 @@ num_groups = settings.read("data_info", "num_groups")
 num_fragments_per_csv = settings.read("data_info", "num_fragments_per_csv")
 neural_net_name = settings.read("neural_net_info", "neural_net_name")
 neural_net = import_neural_net(neural_net_name)
+decision_threshold = settings.read("decision_info", "threshold")
 
 model_save_path = "./saved_model/{}/".format(neural_net_name)
 model_file_save_path = model_save_path + "{}.ckpt".format(neural_net_name)
@@ -38,7 +39,6 @@ with tf.Session() as sess:
 
     saver = tf.train.Saver()
 
-    # Todo: restore
     latest_checkpoint_path = tf.train.latest_checkpoint(model_save_path)
     if latest_checkpoint_path is not None:
         print("Saved model is found. Do you want to restore that model? (Y/n) : ", end="")
@@ -85,7 +85,7 @@ with tf.Session() as sess:
 
                 for pred, ans in zip(prediction_value, answer_value):
                     answer_group = np.argmax(ans)
-                    if pred[1] >= 0.1:
+                    if pred[1] >= decision_threshold:
                         pred_group = 1
                     else:
                         pred_group = 0
@@ -123,7 +123,12 @@ with tf.Session() as sess:
         answer_value = labels
 
         for pred, ans in zip(prediction_value, answer_value):
-            accuracy_table[np.argmax(ans)][np.argmax(pred)] += 1
+            answer_group = np.argmax(ans)
+            if pred[1] >= decision_threshold:
+                pred_group = 1
+            else:
+                pred_group = 0
+            accuracy_table[answer_group][pred_group] += 1
 
         progress_bar(step, max_test_step)
 
