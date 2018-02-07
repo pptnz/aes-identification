@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import os
+import time
 from input_data import train_data, train_labels, validation_data, validation_labels, test_data, test_labels
 from input_tensor import input_tensor
 from answer_tensor import answer_tensor
@@ -76,6 +77,7 @@ with tf.Session() as sess:
 
         if global_step_value % validation_step == 0:
             print("\nValidating...")
+            validation_start_time = time.time()
             accuracy_table = [[0 for _ in range(num_groups)] for _ in range(num_groups)]
             max_validation_step = int(num_validation_files * num_fragments_per_csv / batch_size)
             for step in range(1, max_validation_step + 1):
@@ -92,6 +94,7 @@ with tf.Session() as sess:
                     accuracy_table[answer_group][pred_group] += 1
 
                 progress_bar(step, max_validation_step)
+            validation_end_time = time.time()
 
             print("\nValidation Result")
             print("Percentage:")
@@ -110,10 +113,15 @@ with tf.Session() as sess:
                 correct_count += accuracy_table[i][i]
             print("Accuracy: {:>6.2f}%\n".format(correct_count / (num_fragments_per_csv * num_validation_files) * 100))
 
+            elapsed_time = validation_end_time - validation_start_time
+            print("Elapsed Time: {:>6.5f} sec in total, {:.2e} sec/fragment\n"
+                  .format(elapsed_time, elapsed_time / num_validation_files))
+
         if global_step_value >= max_global_step:
             break
 
     print("\nTesting...")
+    test_start_time = time.time()
     accuracy_table = [[0 for _ in range(num_groups)] for _ in range(num_groups)]
     max_test_step = int(num_test_files * num_fragments_per_csv / batch_size)
     for step in range(1, max_test_step + 1):
@@ -131,6 +139,7 @@ with tf.Session() as sess:
             accuracy_table[answer_group][pred_group] += 1
 
         progress_bar(step, max_test_step)
+    test_end_time = time.time()
 
     print("\nTesting Result")
     print("Percentage:")
@@ -148,6 +157,10 @@ with tf.Session() as sess:
     for i in range(num_groups):
         correct_count += accuracy_table[i][i]
     print("Accuracy: {:>6.2f}%\n".format(correct_count / (num_fragments_per_csv * num_test_files) * 100))
+
+    elapsed_time = test_end_time - test_start_time
+    print("Elapsed Time: {:>6.5f} sec in total, {:.2e} sec/fragment\n"
+          .format(elapsed_time, elapsed_time / num_validation_files))
 
     coord.request_stop()
     coord.join(threads)
