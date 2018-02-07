@@ -22,7 +22,6 @@ keep_prob_value = settings.read("hyperparameters", "keep_prob")
 num_validation_files = settings.read("validation_data", "end") - settings.read("validation_data", "begin") + 1
 num_test_files = settings.read("test_data", "end") - settings.read("test_data", "begin") + 1
 num_groups = settings.read("data_info", "num_groups")
-num_fragments_per_csv = settings.read("data_info", "num_fragments_per_csv")
 neural_net_name = settings.read("neural_net_info", "neural_net_name")
 neural_net = import_neural_net(neural_net_name)
 decision_threshold = settings.read("decision_info", "threshold")
@@ -56,7 +55,6 @@ with tf.Session() as sess:
     threads = tf.train.start_queue_runners(coord=coord)
 
     while True:
-        data, labels = sess.run([train_data, train_labels])
         sess.run(train_step, feed_dict={input_tensor: data, answer_tensor: labels, keep_prob: keep_prob_value})
 
         global_step_value = tf.train.global_step(sess, global_step)
@@ -77,7 +75,7 @@ with tf.Session() as sess:
         if global_step_value % validation_step == 0:
             print("\nValidating...")
             accuracy_table = [[0 for _ in range(num_groups)] for _ in range(num_groups)]
-            max_validation_step = int(num_validation_files * num_fragments_per_csv / batch_size)
+            max_validation_step = int(num_validation_files / batch_size)
             for step in range(1, max_validation_step + 1):
                 data, labels = sess.run([validation_data, validation_labels])
                 prediction_value = sess.run(neural_net.output_tensor, feed_dict={input_tensor: data, keep_prob: 1.0})
@@ -108,14 +106,14 @@ with tf.Session() as sess:
             correct_count = 0
             for i in range(num_groups):
                 correct_count += accuracy_table[i][i]
-            print("Accuracy: {:>6.2f}%\n".format(correct_count / (num_fragments_per_csv * num_validation_files) * 100))
+            print("Accuracy: {:>6.2f}%\n".format(correct_count / num_validation_files * 100))
 
         if global_step_value >= max_global_step:
             break
 
     print("\nTesting...")
     accuracy_table = [[0 for _ in range(num_groups)] for _ in range(num_groups)]
-    max_test_step = int(num_test_files * num_fragments_per_csv / batch_size)
+    max_test_step = int(num_test_files / batch_size)
     for step in range(1, max_test_step + 1):
         data, labels = sess.run([test_data, test_labels])
         prediction_value = sess.run(neural_net.output_tensor,
@@ -147,7 +145,7 @@ with tf.Session() as sess:
     correct_count = 0
     for i in range(num_groups):
         correct_count += accuracy_table[i][i]
-    print("Accuracy: {:>6.2f}%\n".format(correct_count / (num_fragments_per_csv * num_test_files) * 100))
+    print("Accuracy: {:>6.2f}%\n".format(correct_count / num_test_files * 100))
 
     coord.request_stop()
     coord.join(threads)

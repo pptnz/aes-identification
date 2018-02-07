@@ -19,8 +19,7 @@
 
   "data_info": {
     "input_dimension": 256,
-    "num_groups": 2,
-    "num_fragments_per_csv": 100
+    "num_groups": 2
   },
 
   "neural_net_info": {

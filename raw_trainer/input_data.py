@@ -22,34 +22,33 @@ train_queue = tf.train.string_input_producer(train_files, shuffle=True)
 validation_queue = tf.train.string_input_producer(validation_files, shuffle=False)
 test_queue = tf.train.string_input_producer(test_files, shuffle=False)
 
-train_reader = tf.TextLineReader()
-validation_reader = tf.TextLineReader()
-test_reader = tf.TextLineReader()
+input_dimension = settings.read("data_info", "input_dimension")
+num_groups = settings.read("data_info", "num_groups")
+record_bytes = input_dimension + num_groups
+
+train_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
+validation_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
+test_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
 
 _, train_value = train_reader.read(train_queue)
 _, validation_value = validation_reader.read(validation_queue)
 _, test_value = test_reader.read(test_queue)
 
-input_dimension = settings.read("data_info", "input_dimension")
-num_groups = settings.read("data_info", "num_groups")
-record_defaults = [[0.0] for _ in range(input_dimension + num_groups)]
+train_fragment = tf.cast(tf.decode_raw(train_value, tf.uint8), tf.float32)
+validation_fragment = tf.cast(tf.decode_raw(validation_value, tf.uint8), tf.float32)
+test_fragment = tf.cast(tf.decode_raw(test_value, tf.uint8), tf.float32)
 
-train_fragment = tf.stack(tf.decode_csv(train_value, record_defaults=record_defaults))
-validation_fragment = tf.stack(tf.decode_csv(validation_value, record_defaults=record_defaults))
-test_fragment = tf.stack(tf.decode_csv(test_value, record_defaults=record_defaults))
+train_fragment.set_shape([record_bytes])
+validation_fragment.set_shape([record_bytes])
+test_fragment.set_shape([record_bytes])
 
 batch_size = settings.read("hyperparameters", "batch_size")
-num_fragments_per_csv = settings.read("data_info", "num_fragments_per_csv")
-
-train_capacity = num_fragments_per_csv * (train_file_end - train_file_begin + 1)
-min_after_dequeue = train_capacity - batch_size
+train_capacity = train_file_end - train_file_begin + 1
 
 train_batch = tf.train.shuffle_batch([train_fragment],
                                      batch_size=batch_size,
                                      capacity=train_capacity,
-                                     # min_after_dequeue=min_after_dequeue)
                                      min_after_dequeue=batch_size)
-# train_batch = tf.train.batch([train_fragment], batch_size=batch_size)
 validation_batch = tf.train.batch([validation_fragment], batch_size=batch_size)
 test_batch = tf.train.batch([test_fragment], batch_size=batch_size)
 
