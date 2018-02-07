@@ -1,0 +1,20 @@
+{
+  "files": {
+    "not_encrypted": "./test1/",
+    "encrypted": "./test2/"
+  },
+
+  "groups": {
+    "not_encrypted": 0,
+    "encrypted": 1
+  },
+
+  "output": {
+    "location": "./result/",
+    "filename": "raw_{}.txt"
+  },
+
+  "settings": {
+    "fragment_size": 4096
+  }
+}
