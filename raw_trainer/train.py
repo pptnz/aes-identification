@@ -26,6 +26,8 @@ num_groups = settings.read("data_info", "num_groups")
 neural_net_name = settings.read("neural_net_info", "neural_net_name")
 neural_net = import_neural_net(neural_net_name)
 decision_threshold = settings.read("decision_info", "threshold")
+validation_batch_size = settings.read("test_info", "validation_batch_size")
+test_batch_size = settings.read("test_info", "test_batch_size")
 
 model_save_path = "./saved_model/{}/".format(neural_net_name)
 model_file_save_path = model_save_path + "{}.ckpt".format(neural_net_name)
@@ -78,7 +80,7 @@ with tf.Session() as sess:
             print("\nValidating...")
             validation_start_time = time.time()
             accuracy_table = [[0 for _ in range(num_groups)] for _ in range(num_groups)]
-            max_validation_step = int(num_validation_files / batch_size)
+            max_validation_step = int(num_validation_files / validation_batch_size)
             for step in range(1, max_validation_step + 1):
                 data, labels = sess.run([validation_data, validation_labels])
                 prediction_value = sess.run(neural_net.output_tensor, feed_dict={input_tensor: data, keep_prob: 1.0})
@@ -122,7 +124,7 @@ with tf.Session() as sess:
     print("\nTesting...")
     test_start_time = time.time()
     accuracy_table = [[0 for _ in range(num_groups)] for _ in range(num_groups)]
-    max_test_step = int(num_test_files / batch_size)
+    max_test_step = int(num_test_files / test_batch_size)
     for step in range(1, max_test_step + 1):
         data, labels = sess.run([test_data, test_labels])
         prediction_value = sess.run(neural_net.output_tensor,
