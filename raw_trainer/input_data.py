@@ -43,14 +43,16 @@ validation_fragment.set_shape([record_bytes])
 test_fragment.set_shape([record_bytes])
 
 batch_size = settings.read("hyperparameters", "batch_size")
+validation_batch_size = settings.read("test_info", "validation_batch_size")
+test_batch_size = settings.read("test_info", "test_batch_size")
 train_capacity = train_file_end - train_file_begin + 1
 
 train_batch = tf.train.shuffle_batch([train_fragment],
                                      batch_size=batch_size,
                                      capacity=train_capacity,
                                      min_after_dequeue=batch_size)
-validation_batch = tf.train.batch([validation_fragment], batch_size=batch_size)
-test_batch = tf.train.batch([test_fragment], batch_size=batch_size)
+validation_batch = tf.train.batch([validation_fragment], batch_size=validation_batch_size)
+test_batch = tf.train.batch([test_fragment], batch_size=test_batch_size)
 
 train_data, train_labels = tf.split(train_batch, [input_dimension, num_groups], 1)
 validation_data, validation_labels = tf.split(validation_batch, [input_dimension, num_groups], 1)
