@@ -1,24 +1,24 @@
 {
   "train_data": {
-    "location": "/Users/barber/Data/Research/bfd_data/train/train_{}.csv",
+    "location": "/Users/barber/Data/Research/data/theory_binary_data/train/train_{}.bin",
     "begin": 1,
-    "end": 128898
+    "end": 100
   },
 
   "validation_data": {
-    "location": "/Users/barber/Data/Research/bfd_data/validation/validation_{}.csv",
+    "location": "/Users/barber/Data/Research/data/theory_binary_data/validation/validation_{}.bin",
     "begin": 1,
-    "end": 979
+    "end": 100
   },
 
   "test_data": {
-    "location": "/Users/barber/Data/Research/bfd_data/test/test_{}.csv",
+    "location": "/Users/barber/Data/Research/data/theory_binary_data/test/test_{}.bin",
     "begin": 1,
-    "end": 34183
+    "end": 100
   },
 
   "data_info": {
-    "input_dimension": 256,
+    "input_dimension": 4096,
     "num_groups": 2
   },
 
@@ -33,12 +33,12 @@
   "step_info": {
     "global_step": 200000,
     "save_step": 5000,
-    "validation_step": 1,
-    "loss_step": 100
+    "validation_step": 100,
+    "loss_step": 5
   },
 
   "hyperparameters": {
-    "batch_size": 100,
+    "batch_size": 50,
     "learning_rate": 1e-4,
     "keep_prob": 0.5
   },
