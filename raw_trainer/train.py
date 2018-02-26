@@ -12,6 +12,7 @@ from keep_prob import keep_prob
 from loss import loss
 from import_neural_net import import_neural_net
 from progress_bar import progress_bar
+from timer import Timer
 
 settings = Settings("./settings.json")
 max_global_step = settings.read("step_info", "global_step")
@@ -57,6 +58,8 @@ with tf.Session() as sess:
     coord = tf.train.Coordinator()
     threads = tf.train.start_queue_runners(coord=coord)
 
+    timer = Timer()
+
     while True:
         data, labels = sess.run([train_data, train_labels])
         sess.run(train_step, feed_dict={input_tensor: data, answer_tensor: labels, keep_prob: keep_prob_value})
@@ -78,12 +81,15 @@ with tf.Session() as sess:
 
         if global_step_value % validation_step == 0:
             print("\nValidating...")
-            validation_start_time = time.time()
             accuracy_table = [[0 for _ in range(num_groups)] for _ in range(num_groups)]
             max_validation_step = int(num_validation_files / validation_batch_size)
             for step in range(1, max_validation_step + 1):
                 data, labels = sess.run([validation_data, validation_labels])
+
+                timer.start()
                 prediction_value = sess.run(neural_net.output_tensor, feed_dict={input_tensor: data, keep_prob: 1.0})
+                timer.stop()
+
                 answer_value = labels
 
                 for pred, ans in zip(prediction_value, answer_value):
@@ -95,7 +101,6 @@ with tf.Session() as sess:
                     accuracy_table[answer_group][pred_group] += 1
 
                 progress_bar(step, max_validation_step)
-            validation_end_time = time.time()
 
             print("\nValidation Result")
             print("Percentage:")
@@ -114,21 +119,25 @@ with tf.Session() as sess:
                 correct_count += accuracy_table[i][i]
             print("Accuracy: {:>6.2f}%\n".format(correct_count / num_validation_files * 100))
 
-            elapsed_time = validation_end_time - validation_start_time
             print("Elapsed Time: {:>6.5f} sec in total, {:.2e} sec/fragment\n"
-                  .format(elapsed_time, elapsed_time / num_validation_files))
+                  .format(timer.time(), timer.time() / num_validation_files))
+
+            timer.reset()
 
         if global_step_value >= max_global_step:
             break
 
     print("\nTesting...")
-    test_start_time = time.time()
+
     accuracy_table = [[0 for _ in range(num_groups)] for _ in range(num_groups)]
     max_test_step = int(num_test_files / test_batch_size)
     for step in range(1, max_test_step + 1):
         data, labels = sess.run([test_data, test_labels])
-        prediction_value = sess.run(neural_net.output_tensor,
-                                    feed_dict={input_tensor: data, keep_prob: 1.0})
+
+        timer.start()
+        prediction_value = sess.run(neural_net.output_tensor, feed_dict={input_tensor: data, keep_prob: 1.0})
+        timer.stop()
+
         answer_value = labels
 
         for pred, ans in zip(prediction_value, answer_value):
@@ -140,7 +149,7 @@ with tf.Session() as sess:
             accuracy_table[answer_group][pred_group] += 1
 
         progress_bar(step, max_test_step)
-    test_end_time = time.time()
+
 
     print("\nTesting Result")
     print("Percentage:")
@@ -159,9 +168,10 @@ with tf.Session() as sess:
         correct_count += accuracy_table[i][i]
     print("Accuracy: {:>6.2f}%\n".format(correct_count / num_test_files * 100))
 
-    elapsed_time = test_end_time - test_start_time
     print("Elapsed Time: {:>6.5f} sec in total, {:.2e} sec/fragment\n"
-          .format(elapsed_time, elapsed_time / num_validation_files))
+          .format(timer.time(), timer.time() / num_validation_files))
+
+    timer.reset()
 
     coord.request_stop()
     coord.join(threads)
