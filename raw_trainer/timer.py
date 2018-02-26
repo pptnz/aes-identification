@@ -14,6 +14,9 @@ class Timer:
         self.total_elapsed_time += end_time - self.start_time
         self.start_time = None
 
+    def time(self):
+        return self.total_elapsed_time
+
     def reset(self):
         self.total_elapsed_time = 0
         self.start_time = None
