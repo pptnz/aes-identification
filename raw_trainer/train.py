@@ -1,7 +1,6 @@
 import tensorflow as tf
 import numpy as np
 import os
-import time
 from input_data import train_data, train_labels, validation_data, validation_labels, test_data, test_labels
 from input_tensor import input_tensor
 from answer_tensor import answer_tensor
