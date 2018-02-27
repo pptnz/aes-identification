@@ -150,7 +150,6 @@ with tf.Session() as sess:
 
         progress_bar(step, max_test_step)
 
-
     print("\nTesting Result")
     print("Percentage:")
     for row in accuracy_table:
