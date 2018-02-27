@@ -3,10 +3,16 @@ from settings import Settings
 
 settings = Settings("./settings.json")
 
-train_file_location = settings.read("train_data", "location")
-train_file_begin = settings.read("train_data", "begin")
-train_file_end = settings.read("train_data", "end")
-train_files = [train_file_location.format(i) for i in range(train_file_begin, train_file_end + 1)]
+train_plain_directory = settings.read("train_data", "plain")
+train_encrypted_directory = settings.read("train_data", "encrypted")
+
+train_plain_reader = DirectoryReader("/Users/barber/Data/Research/data/theory_fragmentation_data/train/plain",
+                                     4096,
+                                     shuffle=True)
+train_encrypted_reader = DirectoryReader("/Users/barber/Data/Research/data/theory_fragmentation_data/train/encrypted",
+                                         4096,
+                                         shuffle=True)
+# TODO: Implement Batch here
 
 validation_file_location = settings.read("validation_data", "location")
 validation_file_begin = settings.read("validation_data", "begin")

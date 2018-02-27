@@ -1,8 +1,7 @@
 {
   "train_data": {
-    "location": "/Users/barber/Data/Research/data/theory_binary_data/train/train_{}.bin",
-    "begin": 1,
-    "end": 100
+    "plain": "/Users/barber/Data/Research/data/theory_binary_data/train/train_{}.bin",
+    "encrypted": "/Users/barber/Data/Research/data/theory_binary_data/train/train_{}.bin"
   },
 
   "validation_data": {
