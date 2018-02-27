@@ -8,10 +8,10 @@ input_dimension = settings.read("data_info", "input_dimension")
 num_groups = settings.read("data_info", "num_groups")
 
 input_tensor_casted = tf.cast(input_tensor, tf.int32)
-bfd = tf.bincount(input_tensor_casted)
-bfd_casted = tf.cast(bfd, tf.float32)
-bfd_padded = tf.pad(bfd_casted, [[0, 256 - tf.size(bfd_casted)]], 'CONSTANT')
-bfd_reshaped = tf.reshape(bfd_padded, [-1, 16, 16, 1])
+bfd_casted = tf.map_fn(lambda t: tf.cast(tf.bincount(t, minlength=256, maxlength=256), tf.float32),
+                       input_tensor_casted,
+                       dtype=tf.float32)
+bfd_reshaped = tf.reshape(bfd_casted, [-1, 16, 16, 1])
 
 w1 = tf.get_variable(name='w1', shape=[5, 5, 1, 2], initializer=tf.contrib.keras.initializers.he_normal())
 h1 = tf.nn.conv2d(bfd_reshaped, w1, strides=[1, 1, 1, 1], padding='SAME')
