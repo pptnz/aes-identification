@@ -39,6 +39,6 @@ b7 = tf.Variable(tf.truncated_normal([16], dtype=tf.float16, stddev=0.1))
 h7 = tf.nn.tanh(tf.matmul(h6_drop, w7) + b7)
 h7_drop = tf.nn.dropout(h7, keep_prob)
 
-w8 = tf.Variable(tf.zeros([16, num_groups]))
-b8 = tf.Variable(tf.zeros([num_groups]))
+w8 = tf.Variable(tf.zeros([16, num_groups], dtype=tf.float16))
+b8 = tf.Variable(tf.zeros([num_groups], dtype=tf.float16))
 output_tensor = tf.nn.softmax(tf.matmul(h7_drop, w8) + b8)  # do not change the output tensor name.
