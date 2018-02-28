@@ -31,7 +31,7 @@ h5_pool = tf.nn.max_pool(h5, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='
 h5_flat = tf.reshape(h5_pool, [-1, 128])
 
 w6 = tf.get_variable(name='w6', shape=[128, 16], dtype=tf.float16, initializer=tf.contrib.keras.initializers.he_normal())
-b6 = tf.Variable(tf.truncated_normal([16], stddev=0.1))
+b6 = tf.Variable(tf.truncated_normal([16], dtype=tf.float16, stddev=0.1))
 h6 = tf.nn.tanh(tf.matmul(h5_flat, w6) + b6)
 h6_drop = tf.nn.dropout(h6, keep_prob)
 

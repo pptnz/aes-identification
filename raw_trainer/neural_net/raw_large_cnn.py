@@ -30,12 +30,12 @@ h5 = tf.nn.conv2d(h4_pool, w5, strides=[1, 1, 1, 1], padding='SAME')
 h5_flat = tf.reshape(h5, [-1, 8192])
 
 w6 = tf.get_variable(name='w6', shape=[8192, 1024], dtype=tf.float16, initializer=tf.contrib.keras.initializers.he_normal())
-b6 = tf.Variable(tf.truncated_normal([1024], stddev=0.1))
+b6 = tf.Variable(tf.truncated_normal([1024], dtype=tf.float16, stddev=0.1))
 h6 = tf.nn.tanh(tf.matmul(h5_flat, w6) + b6)
 h6_drop = tf.nn.dropout(h6, keep_prob)
 
 w7 = tf.get_variable(name='w7', shape=[1024, 16], dtype=tf.float16, initializer=tf.contrib.keras.initializers.he_normal())
-b7 = tf.Variable(tf.truncated_normal([16], stddev=0.1))
+b7 = tf.Variable(tf.truncated_normal([16], dtype=tf.float16, stddev=0.1))
 h7 = tf.nn.tanh(tf.matmul(h6_drop, w7) + b7)
 h7_drop = tf.nn.dropout(h7, keep_prob)
 

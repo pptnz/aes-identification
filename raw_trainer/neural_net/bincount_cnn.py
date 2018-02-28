@@ -27,7 +27,7 @@ h3_pool = tf.nn.max_pool(h3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='
 h3_flat = tf.reshape(h3_pool, [-1, 32])
 
 w4 = tf.get_variable(name='w4', shape=[32, 8], dtype=tf.float16, initializer=tf.contrib.keras.initializers.he_normal())
-b4 = tf.Variable(tf.truncated_normal([8], stddev=0.1))
+b4 = tf.Variable(tf.truncated_normal([8], dtype=tf.float16, stddev=0.1))
 h4 = tf.nn.tanh(tf.matmul(h3_flat, w4) + b4)
 h4_drop = tf.nn.dropout(h4, keep_prob)
 
