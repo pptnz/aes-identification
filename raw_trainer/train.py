@@ -167,7 +167,7 @@ with tf.Session() as sess:
     print("Accuracy: {:>6.2f}%\n".format(correct_count / num_test_files * 100))
 
     print("Elapsed Time: {:>6.5f} sec in total, {:.2e} sec/fragment\n"
-          .format(timer.time(), timer.time() / num_validation_files))
+          .format(timer.time(), timer.time() / num_test_files))
 
     timer.reset()
 
