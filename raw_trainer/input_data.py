@@ -22,6 +22,7 @@ test_file_end = settings.read("test_data", "end")
 batch_size = settings.read("hyperparameters", "batch_size")
 validation_batch_size = settings.read("test_info", "validation_batch_size")
 test_batch_size = settings.read("test_info", "test_batch_size")
+data_type = eval(settings.read("hyperparameters", "data_type"))
 
 record_bytes = input_dimension + num_groups
 
@@ -37,13 +38,13 @@ data_parser = DataParser()
 train_plain_fragment = data_parser.set_data(train_plain_value) \
     .decode_as_unit8() \
     .concat([1, 0]) \
-    .cast(tf.float16) \
+    .cast(data_type) \
     .set_shape([record_bytes]) \
     .get_data()
 train_encrypted_fragment = data_parser.set_data(train_encrypted_value) \
     .decode_as_unit8() \
     .concat([0, 1]) \
-    .cast(tf.float16) \
+    .cast(data_type) \
     .set_shape([record_bytes]) \
     .get_data()
 
@@ -57,7 +58,7 @@ validation_files = [validation_file_location.format(i) for i in range(validation
 validation_queue = tf.train.string_input_producer(validation_files, shuffle=False)
 validation_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
 _, validation_value = validation_reader.read(validation_queue)
-validation_fragment = tf.cast(tf.decode_raw(validation_value, tf.uint8), tf.float16)
+validation_fragment = tf.cast(tf.decode_raw(validation_value, tf.uint8), data_type)
 validation_fragment.set_shape([record_bytes])
 validation_batch = tf.train.batch([validation_fragment], batch_size=validation_batch_size)
 validation_data, validation_labels = tf.split(validation_batch, [input_dimension, num_groups], 1)
@@ -67,7 +68,7 @@ test_files = [test_file_location.format(i) for i in range(test_file_begin, test_
 test_queue = tf.train.string_input_producer(test_files, shuffle=False)
 test_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
 _, test_value = test_reader.read(test_queue)
-test_fragment = tf.cast(tf.decode_raw(test_value, tf.uint8), tf.float16)
+test_fragment = tf.cast(tf.decode_raw(test_value, tf.uint8), data_type)
 test_fragment.set_shape([record_bytes])
 test_batch = tf.train.batch([test_fragment], batch_size=test_batch_size)
 test_data, test_labels = tf.split(test_batch, [input_dimension, num_groups], 1)
