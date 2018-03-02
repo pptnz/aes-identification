@@ -22,7 +22,7 @@
   },
 
   "neural_net_info": {
-    "neural_net_name": "bincount_cnn"
+    "neural_net_name": "bincount_histogram"
   },
 
   "decision_info": {
