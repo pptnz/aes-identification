@@ -10,6 +10,7 @@ from train_step import train_step
 from keep_prob import keep_prob
 from loss import loss
 from import_neural_net import import_neural_net
+from csv_writer import CSVWriter
 from progress_bar import progress_bar
 from timer import Timer
 
@@ -59,6 +60,9 @@ with tf.Session() as sess:
 
     timer = Timer()
 
+    validation_false_negative_writer = CSVWriter("false_negative.csv", directory="./sampled_fragments/validation")
+    test_false_negative_writer = CSVWriter("false_negative.csv", directory="./sampled_fragments/test")
+
     while True:
         data, labels = sess.run([train_data, train_labels])
         sess.run(train_step, feed_dict={input_tensor: data, answer_tensor: labels, keep_prob: keep_prob_value})
@@ -98,6 +102,10 @@ with tf.Session() as sess:
                     else:
                         pred_group = 0
                     accuracy_table[answer_group][pred_group] += 1
+                    #
+                    # # False Negative
+                    # if answer_group == 1 and pred_group == 0:
+                    #     validation_false_negative_writer.write(data.tolist()[0])
 
                 progress_bar(step, max_validation_step)
 
