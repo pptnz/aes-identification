@@ -61,13 +61,9 @@ with tf.Session() as sess:
 
     timer = Timer()
 
-    validation_true_positive_writer = CSVWriter("true_positive.csv", directory="./sampled_fragments/validation")
     test_true_positive_writer = CSVWriter("true_positive.csv", directory="./sampled_fragments/test")
-    validation_true_negative_writer = CSVWriter("true_negative.csv", directory="./sampled_fragments/validation")
     test_true_negative_writer = CSVWriter("true_negative.csv", directory="./sampled_fragments/test")
-    validation_false_positive_writer = CSVWriter("false_positive.csv", directory="./sampled_fragments/validation")
     test_false_positive_writer = CSVWriter("false_positive.csv", directory="./sampled_fragments/test")
-    validation_false_negative_writer = CSVWriter("false_negative.csv", directory="./sampled_fragments/validation")
     test_false_negative_writer = CSVWriter("false_negative.csv", directory="./sampled_fragments/test")
 
     while True:
@@ -109,26 +105,6 @@ with tf.Session() as sess:
                     else:
                         pred_group = 0
                     accuracy_table[answer_group][pred_group] += 1
-
-                    if answer_group == 0 and pred_group == 0:
-                        # True Positive
-                        if sample_with_probability(0.001):
-                            validation_true_positive_writer.write(data.tolist()[0])
-                    elif answer_group == 1 and pred_group == 1:
-                        # True Negative
-                        if sample_with_probability(0.001):
-                            validation_true_negative_writer.write(data.tolist()[0])
-                    elif answer_group == 0 and pred_group == 1:
-                        # False Positive
-                        if sample_with_probability(0.01):
-                            validation_false_positive_writer.write(data.tolist()[0])
-                    else:
-                        # False Negative
-                        validation_false_negative_writer.write(data.tolist()[0])
-                        
-                    # False Negative
-                    if answer_group == 1 and pred_group == 0:
-                        validation_false_negative_writer.write(data.tolist()[0])
 
                 progress_bar(step, max_validation_step)
 
