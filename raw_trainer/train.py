@@ -30,6 +30,11 @@ neural_net = import_neural_net(neural_net_name)
 decision_threshold = settings.read("decision_info", "threshold")
 validation_batch_size = settings.read("test_info", "validation_batch_size")
 test_batch_size = settings.read("test_info", "test_batch_size")
+sampling_enabled = settings.read("debugging", "sampling")
+true_positive_sampling_rate = settings.read("debugging", "sampling_prob", "true_positive")
+true_negative_sampling_rate = settings.read("debugging", "sampling_prob", "true_negative")
+false_positive_sampling_rate = settings.read("debugging", "sampling_prob", "false_positive")
+false_negative_sampling_rate = settings.read("debugging", "sampling_prob", "false_negative")
 
 model_save_path = "./saved_model/{}/".format(neural_net_name)
 model_file_save_path = model_save_path + "{}.ckpt".format(neural_net_name)
@@ -146,6 +151,7 @@ with tf.Session() as sess:
 
         answer_value = labels
 
+        index_in_batch = 0
         for pred, ans in zip(prediction_value, answer_value):
             answer_group = np.argmax(ans)
             if pred[1] >= decision_threshold:
@@ -154,21 +160,25 @@ with tf.Session() as sess:
                 pred_group = 0
             accuracy_table[answer_group][pred_group] += 1
 
-            if answer_group == 0 and pred_group == 0:
-                # True Positive
-                if sample_with_probability(0.001):
-                    test_true_positive_writer.write(data.tolist()[0])
-            elif answer_group == 1 and pred_group == 1:
-                # True Negative
-                if sample_with_probability(0.001):
-                    test_true_negative_writer.write(data.tolist()[0])
-            elif answer_group == 0 and pred_group == 1:
-                # False Positive
-                if sample_with_probability(0.01):
-                    test_false_positive_writer.write(data.tolist()[0])
-            else:
-                # False Negative
-                test_false_negative_writer.write(data.tolist()[0])
+            if sampling_enabled:
+                if answer_group == 0 and pred_group == 0:
+                    # True Positive
+                    if sample_with_probability(true_positive_sampling_rate):
+                        test_true_positive_writer.write(data.tolist()[index_in_batch])
+                elif answer_group == 1 and pred_group == 1:
+                    # True Negative
+                    if sample_with_probability(true_negative_sampling_rate):
+                        test_true_negative_writer.write(data.tolist()[index_in_batch])
+                elif answer_group == 0 and pred_group == 1:
+                    # False Positive
+                    if sample_with_probability(false_positive_sampling_rate):
+                        test_false_positive_writer.write(data.tolist()[index_in_batch])
+                else:
+                    # False Negative
+                    if sample_with_probability(false_negative_sampling_rate):
+                        test_false_negative_writer.write(data.tolist()[index_in_batch])
+
+            index_in_batch += 1
 
         progress_bar(step, max_test_step)
 
