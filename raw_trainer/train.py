@@ -66,10 +66,10 @@ with tf.Session() as sess:
 
     timer = Timer()
 
-    test_true_positive_writer = CSVWriter("true_positive.csv", directory="./sampled_fragments/test")
-    test_true_negative_writer = CSVWriter("true_negative.csv", directory="./sampled_fragments/test")
-    test_false_positive_writer = CSVWriter("false_positive.csv", directory="./sampled_fragments/test")
-    test_false_negative_writer = CSVWriter("false_negative.csv", directory="./sampled_fragments/test")
+    test_true_positive_writer = CSVWriter("true_positive.csv", directory="./test_sampled_fragments")
+    test_true_negative_writer = CSVWriter("true_negative.csv", directory="./test_sampled_fragments")
+    test_false_positive_writer = CSVWriter("false_positive.csv", directory="./test_sampled_fragments")
+    test_false_negative_writer = CSVWriter("false_negative.csv", directory="./test_sampled_fragments")
 
     while True:
         data, labels = sess.run([train_data, train_labels])
