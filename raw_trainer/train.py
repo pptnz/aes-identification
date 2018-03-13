@@ -66,8 +66,8 @@ with tf.Session() as sess:
 
     timer = Timer()
 
-    test_true_positive_writer = CSVWriter("true_positive.csv", directory="./test_sampled_fragments")
     test_true_negative_writer = CSVWriter("true_negative.csv", directory="./test_sampled_fragments")
+    test_true_positive_writer = CSVWriter("true_positive.csv", directory="./test_sampled_fragments")
     test_false_positive_writer = CSVWriter("false_positive.csv", directory="./test_sampled_fragments")
     test_false_negative_writer = CSVWriter("false_negative.csv", directory="./test_sampled_fragments")
 
@@ -162,13 +162,13 @@ with tf.Session() as sess:
 
             if sampling_enabled:
                 if answer_group == 0 and pred_group == 0:
-                    # True Positive
-                    if sample_with_probability(true_positive_sampling_rate):
-                        test_true_positive_writer.write(data.tolist()[index_in_batch])
-                elif answer_group == 1 and pred_group == 1:
                     # True Negative
                     if sample_with_probability(true_negative_sampling_rate):
                         test_true_negative_writer.write(data.tolist()[index_in_batch])
+                elif answer_group == 1 and pred_group == 1:
+                    # True Positive
+                    if sample_with_probability(true_positive_sampling_rate):
+                        test_true_positive_writer.write(data.tolist()[index_in_batch])
                 elif answer_group == 0 and pred_group == 1:
                     # False Positive
                     if sample_with_probability(false_positive_sampling_rate):
