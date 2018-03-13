@@ -162,7 +162,7 @@ with tf.Session() as sess:
 
             if sampling_enabled:
                 data_sample = data.tolist()[index_in_batch]
-                data_histogram = np.histogram(data_sample, bins=256, range=[0, 256])
+                data_histogram = np.histogram(data_sample, bins=256, range=[0, 256])[0].tolist()
                 data_std = [np.std(data_histogram)]
                 data_to_write = [data_sample, data_histogram, data_std]
 
