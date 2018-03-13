@@ -13,9 +13,9 @@ class CSVWriter:
         self.csv_file.close()
 
     def write(self, data):
-        for data_row in data:
-            data_in_str = [str(datum) for datum in data_row]
-            data_to_write = ','.join(data_in_str)
-            self.csv_file.write("{}".format(data_to_write))
-            self.csv_file.write(",,")
+        data_in_str = [[str(datum) for datum in data_row] for data_row in data]
+        data_concatenated = [','.join(datum_in_str) for datum_in_str in data_in_str]
+        data_to_write = ',,'.join(data_concatenated)
+        self.csv_file.write("{}".format(data_to_write))
+        self.csv_file.write(",,")
         self.csv_file.write("\n")
