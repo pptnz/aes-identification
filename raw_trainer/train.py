@@ -163,10 +163,9 @@ with tf.Session() as sess:
             if sampling_enabled:
                 data_sample = data.tolist()[index_in_batch]
                 data_histogram = np.histogram(data_sample, bins=256, range=[0, 256])
-                data_std = np.std(data_histogram)
+                data_std = [np.std(data_histogram)]
+                data_to_write = [data_sample, data_histogram, data_std]
 
-                # TODO: Complete below here
-                data_to_write = None
                 if answer_group == 0 and pred_group == 0:
                     # True Negative
                     if sample_with_probability(true_negative_sampling_rate):
