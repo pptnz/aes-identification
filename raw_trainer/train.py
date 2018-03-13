@@ -161,26 +161,37 @@ with tf.Session() as sess:
             accuracy_table[answer_group][pred_group] += 1
 
             if sampling_enabled:
-                data_sample = data.tolist()[index_in_batch]
-                data_histogram = np.bincount(data_sample, minlength=256).tolist()
-                data_std = [np.std(data_histogram)]
-                data_to_write = [data_sample, data_histogram, data_std]
-
                 if answer_group == 0 and pred_group == 0:
                     # True Negative
                     if sample_with_probability(true_negative_sampling_rate):
+                        data_sample = data.tolist()[index_in_batch]
+                        data_histogram = np.bincount(data_sample, minlength=256).tolist()
+                        data_std = [np.std(data_histogram)]
+                        data_to_write = [data_sample, data_histogram, data_std]
                         test_true_negative_writer.write(data_to_write)
                 elif answer_group == 1 and pred_group == 1:
                     # True Positive
                     if sample_with_probability(true_positive_sampling_rate):
+                        data_sample = data.tolist()[index_in_batch]
+                        data_histogram = np.bincount(data_sample, minlength=256).tolist()
+                        data_std = [np.std(data_histogram)]
+                        data_to_write = [data_sample, data_histogram, data_std]
                         test_true_positive_writer.write(data_to_write)
                 elif answer_group == 0 and pred_group == 1:
                     # False Positive
                     if sample_with_probability(false_positive_sampling_rate):
+                        data_sample = data.tolist()[index_in_batch]
+                        data_histogram = np.bincount(data_sample, minlength=256).tolist()
+                        data_std = [np.std(data_histogram)]
+                        data_to_write = [data_sample, data_histogram, data_std]
                         test_false_positive_writer.write(data_to_write)
                 else:
                     # False Negative
                     if sample_with_probability(false_negative_sampling_rate):
+                        data_sample = data.tolist()[index_in_batch]
+                        data_histogram = np.bincount(data_sample, minlength=256).tolist()
+                        data_std = [np.std(data_histogram)]
+                        data_to_write = [data_sample, data_histogram, data_std]
                         test_false_negative_writer.write(data_to_write)
 
             index_in_batch += 1
