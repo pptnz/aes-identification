@@ -72,7 +72,6 @@ with tf.Session() as sess:
     
     num_validation_files = DataFlags.get("num_validation_files")
     num_test_files = DataFlags.get("num_test_files")
-    print(num_validation_files, num_test_files)
 
     while True:
         data, labels = sess.run([train_data, train_labels])
