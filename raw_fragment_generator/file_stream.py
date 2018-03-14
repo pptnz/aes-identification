@@ -7,8 +7,9 @@ class FileStream:
     total_files_count = 0
     current_files_count = 0
 
-    def __init__(self, directory="./"):
+    def __init__(self, directory="./", destructive=False):
         self.directory = directory
+        self.destructive = destructive
         self.filename_queue = list(filter(lambda filename: (not filename.startswith(".")) and ("." in filename),
                                           os.listdir(directory)))
         FileStream.total_files_count += len(self.filename_queue)
@@ -16,6 +17,9 @@ class FileStream:
         self.set_to_next_file()
 
     def set_to_next_file(self):
+        if self.destructive:
+            os.remove(self.file.file_path)
+
         if len(self.filename_queue) == 0:
             self.file = None
             return False
