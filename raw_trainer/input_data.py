@@ -1,6 +1,6 @@
 import tensorflow as tf
 from settings import Settings
-from directory_reader import DirectoryReader
+from distribute_data import distribute_plain_data, distribute_encrypted_data
 from data_parser import DataParser
 
 settings = Settings("./settings.json")
@@ -8,16 +8,8 @@ settings = Settings("./settings.json")
 input_dimension = settings.read("data_info", "input_dimension")
 num_groups = settings.read("data_info", "num_groups")
 
-train_plain_directory = settings.read("train_data", "plain")
-train_encrypted_directory = settings.read("train_data", "encrypted")
-
-validation_file_location = settings.read("validation_data", "location")
-validation_file_begin = settings.read("validation_data", "begin")
-validation_file_end = settings.read("validation_data", "end")
-
-test_file_location = settings.read("test_data", "location")
-test_file_begin = settings.read("test_data", "begin")
-test_file_end = settings.read("test_data", "end")
+plain_directory = settings.read("data", "plain")
+encrypted_directory = settings.read("data", "encrypted")
 
 batch_size = settings.read("hyperparameters", "batch_size")
 validation_batch_size = settings.read("test_info", "validation_batch_size")
@@ -27,48 +19,88 @@ data_type = eval(settings.read("hyperparameters", "data_type"))
 record_bytes = input_dimension + num_groups
 
 # Train Batch
-train_plain_reader = DirectoryReader(train_plain_directory, input_dimension, shuffle=True)
-train_encrypted_reader = DirectoryReader(train_encrypted_directory, input_dimension, shuffle=True)
+plain_train_files, plain_validation_files, plain_test_files = distribute_plain_data()
+encrypted_train_files, encrypted_validation_files, encrypted_test_files = distribute_encrypted_data()
 
-train_plain_value = train_plain_reader.read()
-train_encrypted_value = train_encrypted_reader.read()
+plain_train_queue = tf.train.string_input_producer(plain_train_files, shuffle=True)
+encrypted_train_queue = tf.train.string_input_producer(encrypted_train_files, shuffle=True)
+
+plain_validation_queue = tf.train.string_input_producer(plain_validation_files, shuffle=False)
+encrypted_validation_queue = tf.train.string_input_producer(encrypted_validation_files, shuffle=False)
+
+plain_test_queue = tf.train.string_input_producer(plain_test_files, shuffle=False)
+encrypted_test_queue = tf.train.string_input_producer(encrypted_test_files, shuffle=False)
+
+plain_train_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
+encrypted_train_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
+
+plain_validation_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
+encrypted_validation_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
+
+plain_test_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
+encrypted_test_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
+
+_, plain_train_value = plain_train_reader.read(plain_train_queue)
+_, encrypted_train_value = encrypted_train_reader.read(encrypted_train_queue)
+
+_, plain_validation_value = plain_validation_reader.read(plain_validation_queue)
+_, encrypted_validation_value = encrypted_validation_reader.read(encrypted_validation_queue)
+
+_, plain_test_value = plain_test_reader.read(plain_test_queue)
+_, encrypted_test_value = encrypted_test_reader.read(encrypted_test_queue)
 
 data_parser = DataParser()
 
-train_plain_fragment = data_parser.set_data(train_plain_value) \
+# Train Data
+plain_train_fragment = data_parser.set_data(plain_train_value) \
     .decode_as_unit8() \
     .concat([1, 0]) \
     .cast(data_type) \
     .set_shape([record_bytes]) \
     .get_data()
-train_encrypted_fragment = data_parser.set_data(train_encrypted_value) \
+encrypted_train_fragment = data_parser.set_data(encrypted_train_value) \
     .decode_as_unit8() \
     .concat([0, 1]) \
     .cast(data_type) \
     .set_shape([record_bytes]) \
     .get_data()
-
-train_fragments = [train_plain_fragment, train_encrypted_fragment]
+train_fragments = [plain_train_fragment, encrypted_train_fragment]
 train_selection_mask = tf.reshape(tf.multinomial(tf.log([[10., 10.]]), batch_size), [batch_size])
 train_batch = tf.gather(train_fragments, train_selection_mask)
 train_data, train_labels = tf.split(train_batch, [input_dimension, num_groups], 1)
 
-# Validation Batch
-validation_files = [validation_file_location.format(i) for i in range(validation_file_begin, validation_file_end + 1)]
-validation_queue = tf.train.string_input_producer(validation_files, shuffle=False)
-validation_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
-_, validation_value = validation_reader.read(validation_queue)
-validation_fragment = tf.cast(tf.decode_raw(validation_value, tf.uint8), data_type)
-validation_fragment.set_shape([record_bytes])
-validation_batch = tf.train.batch([validation_fragment], batch_size=validation_batch_size)
+# Validation Data
+plain_validation_fragment = data_parser.set_data(plain_validation_value) \
+    .decode_as_unit8() \
+    .concat([1, 0]) \
+    .cast(data_type) \
+    .set_shape([record_bytes]) \
+    .get_data()
+encrypted_validation_fragment = data_parser.set_data(encrypted_validation_value) \
+    .decode_as_unit8() \
+    .concat([0, 1]) \
+    .cast(data_type) \
+    .set_shape([record_bytes]) \
+    .get_data()
+validation_fragments = [plain_validation_fragment, encrypted_validation_fragment]
+validation_selection_mask = tf.reshape(tf.multinomial(tf.log([[10., 10.]]), batch_size), [batch_size])
+validation_batch = tf.gather(validation_fragments, validation_selection_mask)
 validation_data, validation_labels = tf.split(validation_batch, [input_dimension, num_groups], 1)
 
-# Test Batch
-test_files = [test_file_location.format(i) for i in range(test_file_begin, test_file_end + 1)]
-test_queue = tf.train.string_input_producer(test_files, shuffle=False)
-test_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
-_, test_value = test_reader.read(test_queue)
-test_fragment = tf.cast(tf.decode_raw(test_value, tf.uint8), data_type)
-test_fragment.set_shape([record_bytes])
-test_batch = tf.train.batch([test_fragment], batch_size=test_batch_size)
+# Train Data
+plain_test_fragment = data_parser.set_data(plain_test_value) \
+    .decode_as_unit8() \
+    .concat([1, 0]) \
+    .cast(data_type) \
+    .set_shape([record_bytes]) \
+    .get_data()
+encrypted_test_fragment = data_parser.set_data(encrypted_test_value) \
+    .decode_as_unit8() \
+    .concat([0, 1]) \
+    .cast(data_type) \
+    .set_shape([record_bytes]) \
+    .get_data()
+test_fragments = [plain_test_fragment, encrypted_test_fragment]
+test_selection_mask = tf.reshape(tf.multinomial(tf.log([[10., 10.]]), batch_size), [batch_size])
+test_batch = tf.gather(test_fragments, test_selection_mask)
 test_data, test_labels = tf.split(test_batch, [input_dimension, num_groups], 1)
