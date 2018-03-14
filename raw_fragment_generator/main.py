@@ -6,14 +6,16 @@ from raw_writer import RawWriter
 def main():
     settings = Settings()
 
+    raw_filename = settings.read("output", "filename")
+    file_output_directory = settings.read("output", "location")
+    destructive = settings.read("settings", "destructive")
+
     file_streams = []
     for group in settings.read("files").keys():
         group_number = settings.read("groups")[group]
-        file_stream = FileStream(settings.read("files")[group])
+        file_stream = FileStream(settings.read("files")[group], destructive=destructive)
         file_streams.append((group_number, file_stream))
 
-    raw_filename = settings.read("output", "filename")
-    file_output_directory = settings.read("output", "location")
     raw_writer = RawWriter(raw_filename, directory=file_output_directory)
 
     fragment_size = settings.read("settings", "fragment_size")
