@@ -12,6 +12,5 @@ class DataFlags:
     @staticmethod
     def add(key, value):
         if key not in DataFlags.data.keys():
-            DataFlags[key] = 0
+            DataFlags.data[key] = 0
         DataFlags.data[key] += value
-
