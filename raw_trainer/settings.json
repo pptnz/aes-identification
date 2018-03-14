@@ -1,7 +1,7 @@
 {
   "data": {
-    "plain": "/somewhere",
-    "encrypted": "somewhere"
+    "plain": "/Users/barber/Data/Research/data/theory_whole_data/plain/",
+    "encrypted": "/Users/barber/Data/Research/data/theory_whole_data/encrypted"
   },
 
   "data_info": {
@@ -15,7 +15,7 @@
   },
 
   "neural_net_info": {
-    "neural_net_name": "layer1"
+    "neural_net_name": "layer2"
   },
 
   "decision_info": {
@@ -38,12 +38,12 @@
   },
 
   "test_info": {
-    "validation_batch_size": 1,
-    "test_batch_size": 1
+    "validation_batch_size": 100,
+    "test_batch_size": 100
   },
 
   "debugging": {
-    "sampling": true,
+    "sampling": false,
     "sampling_prob": {
       "true_positive": 0.001,
       "true_negative": 0.001,
