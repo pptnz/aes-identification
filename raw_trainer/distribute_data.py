@@ -1,6 +1,7 @@
 import os
 import random
 from settings import Settings
+from data_flags import DataFlags
 
 
 def distribute_plain_data():
@@ -43,5 +44,8 @@ def distribute_encrypted_data():
     train_index = int(num_files * proportion_train)
     validation_index = int(train_index + (num_files * proportion_validation))
     test_index = int(validation_index + (num_files * proportion_test))
+
+    DataFlags.put("num_validation_files", validation_index - train_index)
+    DataFlags.put("num_test_files", test_index - validation_index)
 
     return file_paths[0:train_index], file_paths[train_index:validation_index], file_paths[validation_index:test_index]

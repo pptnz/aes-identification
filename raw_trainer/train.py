@@ -13,6 +13,7 @@ from import_neural_net import import_neural_net
 from csv_writer import CSVWriter
 from sample_with_probability import sample_with_probability
 from progress_bar import progress_bar
+from data_flags import DataFlags
 from timer import Timer
 
 settings = Settings("./settings.json")
@@ -22,8 +23,6 @@ validation_step = settings.read("step_info", "validation_step")
 loss_step = settings.read("step_info", "loss_step")
 batch_size = settings.read("hyperparameters", "batch_size")
 keep_prob_value = settings.read("hyperparameters", "keep_prob")
-num_validation_files = settings.read("validation_data", "end") - settings.read("validation_data", "begin") + 1
-num_test_files = settings.read("test_data", "end") - settings.read("test_data", "begin") + 1
 num_groups = settings.read("data_info", "num_groups")
 neural_net_name = settings.read("neural_net_info", "neural_net_name")
 neural_net = import_neural_net(neural_net_name)
@@ -70,6 +69,10 @@ with tf.Session() as sess:
     test_true_positive_writer = CSVWriter("true_positive.csv", directory="./test_sampled_fragments")
     test_false_positive_writer = CSVWriter("false_positive.csv", directory="./test_sampled_fragments")
     test_false_negative_writer = CSVWriter("false_negative.csv", directory="./test_sampled_fragments")
+    
+    num_validation_files = DataFlags.get("num_validation_files")
+    num_test_files = DataFlags.get("num_test_files")
+    print(num_validation_files, num_test_files)
 
     while True:
         data, labels = sess.run([train_data, train_labels])
