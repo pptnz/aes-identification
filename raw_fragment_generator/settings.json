@@ -15,6 +15,7 @@
   },
 
   "settings": {
-    "fragment_size": 4096
+    "fragment_size": 4096,
+    "destructive": true
   }
 }
