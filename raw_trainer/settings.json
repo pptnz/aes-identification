@@ -1,24 +1,17 @@
 {
-  "train_data": {
-    "plain": "/Users/barber/Data/Research/data/theory_fragmentation_data/train/plain",
-    "encrypted": "/Users/barber/Data/Research/data/theory_fragmentation_data/train/encrypted"
-  },
-
-  "validation_data": {
-    "location": "/Users/barber/Data/Research/data/theory_fragmentation_data/fragmented_validation/fragmented_validation_{}.bin",
-    "begin": 1,
-    "end": 2000
-  },
-
-  "test_data": {
-    "location": "/Users/barber/Data/Research/data/theory_fragmentation_data/fragmented_test/fragmented_test_{}.bin",
-    "begin": 1,
-    "end": 2000
+  "data": {
+    "plain": "/somewhere",
+    "encrypted": "somewhere"
   },
 
   "data_info": {
     "input_dimension": 4096,
-    "num_groups": 2
+    "num_groups": 2,
+    "proportion": {
+      "train": 0.7,
+      "validation": 0.1,
+      "test": 0.2
+    }
   },
 
   "neural_net_info": {
