@@ -17,7 +17,7 @@ class FileStream:
         self.set_to_next_file()
 
     def set_to_next_file(self):
-        if self.destructive:
+        if self.file is not None and self.destructive:
             os.remove(self.file.file_path)
 
         if len(self.filename_queue) == 0:
