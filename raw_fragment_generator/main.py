@@ -23,7 +23,7 @@ def main():
     for group, file_stream in file_streams:
         fragment_data = file_stream.read(fragment_size)
         while fragment_data is not None:
-            data_to_write = fragment_data
+            data_to_write = fragment_data + bytes([1 - group]) + bytes([group])
             raw_writer.write(data_to_write)
 
             # next data
