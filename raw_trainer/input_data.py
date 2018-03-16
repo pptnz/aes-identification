@@ -17,7 +17,7 @@ validation_batch_size = settings.read("test_info", "validation_batch_size")
 test_batch_size = settings.read("test_info", "test_batch_size")
 data_type = eval(settings.read("hyperparameters", "data_type"))
 
-record_bytes = input_dimension + 2
+record_bytes = input_dimension + num_groups
 
 plain_train_files, plain_validation_files, plain_test_files = distribute_plain_data()
 encrypted_train_files, encrypted_validation_files, encrypted_test_files = distribute_encrypted_data()
@@ -30,9 +30,9 @@ train_queue = tf.train.string_input_producer(train_files, shuffle=True)
 validation_queue = tf.train.string_input_producer(validation_files, shuffle=False)
 test_queue = tf.train.string_input_producer(test_files, shuffle=False)
 
-train_reader = tf.FixedLengthRecordReader(record_bytes=input_dimension)
-validation_reader = tf.FixedLengthRecordReader(record_bytes=input_dimension)
-test_reader = tf.FixedLengthRecordReader(record_bytes=input_dimension)
+train_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
+validation_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
+test_reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
 
 _, train_value = train_reader.read(train_queue)
 _, validation_value = validation_reader.read(validation_queue)
@@ -43,7 +43,6 @@ data_parser = DataParser()
 # Train Data
 train_fragment = data_parser.set_data(train_value) \
     .decode_as_unit8() \
-    .concat([1, 0]) \
     .cast(data_type) \
     .set_shape([record_bytes]) \
     .get_data()
@@ -53,7 +52,6 @@ train_data, train_labels = tf.split(train_batch, [input_dimension, num_groups], 
 # Validation Data
 validation_fragment = data_parser.set_data(validation_value) \
     .decode_as_unit8() \
-    .concat([1, 0]) \
     .cast(data_type) \
     .set_shape([record_bytes]) \
     .get_data()
@@ -63,7 +61,6 @@ validation_data, validation_labels = tf.split(validation_batch, [input_dimension
 # Test Data
 test_fragment = data_parser.set_data(test_value) \
     .decode_as_unit8() \
-    .concat([1, 0]) \
     .cast(data_type) \
     .set_shape([record_bytes]) \
     .get_data()
