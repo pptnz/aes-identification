@@ -1,21 +1,28 @@
 {
-  "data": {
-    "plain": "/Users/barber/Data/Research/data/theory_whole_data/plain/",
-    "encrypted": "/Users/barber/Data/Research/data/theory_whole_data/encrypted"
+  "train_data": {
+    "plain": "/Users/barber/Data/Research/data/theory_fragmentation_data/train/plain",
+    "encrypted": "/Users/barber/Data/Research/data/theory_fragmentation_data/train/encrypted"
+  },
+
+  "validation_data": {
+    "location": "/Users/barber/Data/Research/data/theory_fragmentation_data/fragmented_validation/fragmented_validation_{}.bin",
+    "begin": 1,
+    "end": 2000
+  },
+
+  "test_data": {
+    "location": "/Users/barber/Data/Research/data/theory_fragmentation_data/fragmented_test/fragmented_test_{}.bin",
+    "begin": 1,
+    "end": 2000
   },
 
   "data_info": {
     "input_dimension": 4096,
-    "num_groups": 2,
-    "proportion": {
-      "train": 0.7,
-      "validation": 0.1,
-      "test": 0.2
-    }
+    "num_groups": 2
   },
 
   "neural_net_info": {
-    "neural_net_name": "layer2"
+    "neural_net_name": "layer1"
   },
 
   "decision_info": {
@@ -38,12 +45,12 @@
   },
 
   "test_info": {
-    "validation_batch_size": 100,
-    "test_batch_size": 100
+    "validation_batch_size": 1,
+    "test_batch_size": 1
   },
 
   "debugging": {
-    "sampling": false,
+    "sampling": true,
     "sampling_prob": {
       "true_positive": 0.001,
       "true_negative": 0.001,
