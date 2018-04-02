@@ -1,19 +1,19 @@
 {
   "train_data": {
-    "plain": "/Users/barber/Data/Research/data/theory_fragmentation_data/train/plain",
-    "encrypted": "/Users/barber/Data/Research/data/theory_fragmentation_data/train/encrypted"
+    "plain": "../toy_dataset/train/plain",
+    "encrypted": "../toy_dataset/train/encrypted"
   },
 
   "validation_data": {
-    "location": "/Users/barber/Data/Research/data/theory_fragmentation_data/fragmented_validation/fragmented_validation_{}.bin",
+    "location": "../toy_dataset/validation/validation_{}.dat",
     "begin": 1,
-    "end": 2000
+    "end": 100
   },
 
   "test_data": {
-    "location": "/Users/barber/Data/Research/data/theory_fragmentation_data/fragmented_test/fragmented_test_{}.bin",
+    "location": "../toy_dataset/test/test_{}.dat",
     "begin": 1,
-    "end": 2000
+    "end": 100
   },
 
   "data_info": {
@@ -30,7 +30,7 @@
   },
 
   "step_info": {
-    "global_step": 200000,
+    "global_step": 100000,
     "save_step": 10000,
     "validation_step": 100,
     "loss_step": 5
