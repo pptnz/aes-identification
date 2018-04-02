@@ -9,7 +9,7 @@ settings = Settings("./settings.json")
 input_dimension = settings.read("data_info", "input_dimension")
 num_groups = settings.read("data_info", "num_groups")
 data_type = eval(settings.read("hyperparameters", "data_type"))
-batch_size = eval(settings.read("hyperparameters", "batch_size"))
+batch_size = settings.read("hyperparameters", "batch_size")
 
 lstm_width = 4096
 lstm_depth = 2
