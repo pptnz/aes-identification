@@ -22,7 +22,7 @@
   },
 
   "neural_net_info": {
-    "neural_net_name": "raw_rnn_net"
+    "neural_net_name": "layer1"
   },
 
   "decision_info": {
