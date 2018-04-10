@@ -33,7 +33,9 @@ def main():
         else:
             for filename in files:
                 file = File(filename, directory=directory)
-                key = ''.join(random.choices(string.ascii_letters + string.digits + string.punctuation, k=32))
+                key = ""
+                for _ in range(32):
+                    key += random.choice(string.ascii_letters + string.digits + string.punctuation)
                 file.encrypt(key, filename + ".encrypted", directory=output_directory)
                 print_progress(files_count, num_files)
                 files_count += 1
