@@ -12,4 +12,4 @@ num_groups = settings.read("data_info", "num_groups")
 epsilon = settings.read("hyperparameters", "epsilon")
 
 
-loss = tf.losses.mean_squared_error(answer_tensor, neural_net.output_tensor)
+loss = -tf.reduce_sum([1, 1] * answer_tensor * tf.log(neural_net.output_tensor + epsilon))

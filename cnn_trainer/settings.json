@@ -33,7 +33,7 @@
     "global_step": 100000,
     "save_step": 10000,
     "validation_step": 100,
-    "loss_step": 1
+    "loss_step": 5
   },
 
   "hyperparameters": {
@@ -50,7 +50,7 @@
   },
 
   "debugging": {
-    "sampling": false,
+    "sampling": true,
     "sampling_prob": {
       "true_positive": 0.001,
       "true_negative": 0.001,
