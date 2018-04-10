@@ -9,6 +9,7 @@ neural_net_name = settings.read("neural_net_info", "neural_net_name")
 neural_net = import_neural_net(neural_net_name)
 batch_size = settings.read("hyperparameters", "batch_size")
 num_groups = settings.read("data_info", "num_groups")
+epsilon = settings.read("hyperparameters", "epsilon")
 
 
-loss = -tf.reduce_sum([1, 1] * answer_tensor * tf.log(neural_net.output_tensor))
+loss = tf.losses.mean_squared_error(answer_tensor, neural_net.output_tensor)

@@ -1,7 +1,6 @@
 import tensorflow as tf
 import numpy as np
 import os
-import time
 from input_data import train_data, train_labels, validation_data, validation_labels, test_data, test_labels
 from input_tensor import input_tensor
 from answer_tensor import answer_tensor
@@ -11,7 +10,10 @@ from train_step import train_step
 from keep_prob import keep_prob
 from loss import loss
 from import_neural_net import import_neural_net
+from csv_writer import CSVWriter
+from sample_with_probability import sample_with_probability
 from progress_bar import progress_bar
+from timer import Timer
 
 settings = Settings("./settings.json")
 max_global_step = settings.read("step_info", "global_step")
@@ -23,10 +25,16 @@ keep_prob_value = settings.read("hyperparameters", "keep_prob")
 num_validation_files = settings.read("validation_data", "end") - settings.read("validation_data", "begin") + 1
 num_test_files = settings.read("test_data", "end") - settings.read("test_data", "begin") + 1
 num_groups = settings.read("data_info", "num_groups")
-num_fragments_per_csv = settings.read("data_info", "num_fragments_per_csv")
 neural_net_name = settings.read("neural_net_info", "neural_net_name")
 neural_net = import_neural_net(neural_net_name)
 decision_threshold = settings.read("decision_info", "threshold")
+validation_batch_size = settings.read("test_info", "validation_batch_size")
+test_batch_size = settings.read("test_info", "test_batch_size")
+sampling_enabled = settings.read("debugging", "sampling")
+true_positive_sampling_rate = settings.read("debugging", "sampling_prob", "true_positive")
+true_negative_sampling_rate = settings.read("debugging", "sampling_prob", "true_negative")
+false_positive_sampling_rate = settings.read("debugging", "sampling_prob", "false_positive")
+false_negative_sampling_rate = settings.read("debugging", "sampling_prob", "false_negative")
 
 model_save_path = "./saved_model/{}/".format(neural_net_name)
 model_file_save_path = model_save_path + "{}.ckpt".format(neural_net_name)
@@ -56,6 +64,13 @@ with tf.Session() as sess:
     coord = tf.train.Coordinator()
     threads = tf.train.start_queue_runners(coord=coord)
 
+    timer = Timer()
+
+    test_true_negative_writer = CSVWriter("true_negative.csv", directory="./test_sampled_fragments")
+    test_true_positive_writer = CSVWriter("true_positive.csv", directory="./test_sampled_fragments")
+    test_false_positive_writer = CSVWriter("false_positive.csv", directory="./test_sampled_fragments")
+    test_false_negative_writer = CSVWriter("false_negative.csv", directory="./test_sampled_fragments")
+
     while True:
         data, labels = sess.run([train_data, train_labels])
         sess.run(train_step, feed_dict={input_tensor: data, answer_tensor: labels, keep_prob: keep_prob_value})
@@ -77,12 +92,15 @@ with tf.Session() as sess:
 
         if global_step_value % validation_step == 0:
             print("\nValidating...")
-            validation_start_time = time.time()
             accuracy_table = [[0 for _ in range(num_groups)] for _ in range(num_groups)]
-            max_validation_step = int(num_validation_files * num_fragments_per_csv / batch_size)
+            max_validation_step = int(num_validation_files / validation_batch_size)
             for step in range(1, max_validation_step + 1):
                 data, labels = sess.run([validation_data, validation_labels])
+
+                timer.start()
                 prediction_value = sess.run(neural_net.output_tensor, feed_dict={input_tensor: data, keep_prob: 1.0})
+                timer.stop()
+
                 answer_value = labels
 
                 for pred, ans in zip(prediction_value, answer_value):
@@ -94,7 +112,6 @@ with tf.Session() as sess:
                     accuracy_table[answer_group][pred_group] += 1
 
                 progress_bar(step, max_validation_step)
-            validation_end_time = time.time()
 
             print("\nValidation Result")
             print("Percentage:")
@@ -111,25 +128,30 @@ with tf.Session() as sess:
             correct_count = 0
             for i in range(num_groups):
                 correct_count += accuracy_table[i][i]
-            print("Accuracy: {:>6.2f}%\n".format(correct_count / (num_fragments_per_csv * num_validation_files) * 100))
+            print("Accuracy: {:>6.2f}%\n".format(correct_count / num_validation_files * 100))
 
-            elapsed_time = validation_end_time - validation_start_time
             print("Elapsed Time: {:>6.5f} sec in total, {:.2e} sec/fragment\n"
-                  .format(elapsed_time, elapsed_time / num_validation_files))
+                  .format(timer.time(), timer.time() / num_validation_files))
+
+            timer.reset()
 
         if global_step_value >= max_global_step:
             break
 
     print("\nTesting...")
-    test_start_time = time.time()
+
     accuracy_table = [[0 for _ in range(num_groups)] for _ in range(num_groups)]
-    max_test_step = int(num_test_files * num_fragments_per_csv / batch_size)
+    max_test_step = int(num_test_files / test_batch_size)
     for step in range(1, max_test_step + 1):
         data, labels = sess.run([test_data, test_labels])
-        prediction_value = sess.run(neural_net.output_tensor,
-                                    feed_dict={input_tensor: data, keep_prob: 1.0})
+
+        timer.start()
+        prediction_value = sess.run(neural_net.output_tensor, feed_dict={input_tensor: data, keep_prob: 1.0})
+        timer.stop()
+
         answer_value = labels
 
+        index_in_batch = 0
         for pred, ans in zip(prediction_value, answer_value):
             answer_group = np.argmax(ans)
             if pred[1] >= decision_threshold:
@@ -138,8 +160,43 @@ with tf.Session() as sess:
                 pred_group = 0
             accuracy_table[answer_group][pred_group] += 1
 
+            if sampling_enabled:
+                if answer_group == 0 and pred_group == 0:
+                    # True Negative
+                    if sample_with_probability(true_negative_sampling_rate):
+                        data_sample = data.tolist()[index_in_batch]
+                        data_histogram = np.bincount(data_sample, minlength=256).tolist()
+                        data_std = [np.std(data_histogram)]
+                        data_to_write = [data_sample, data_histogram, data_std]
+                        test_true_negative_writer.write(data_to_write)
+                elif answer_group == 1 and pred_group == 1:
+                    # True Positive
+                    if sample_with_probability(true_positive_sampling_rate):
+                        data_sample = data.tolist()[index_in_batch]
+                        data_histogram = np.bincount(data_sample, minlength=256).tolist()
+                        data_std = [np.std(data_histogram)]
+                        data_to_write = [data_sample, data_histogram, data_std]
+                        test_true_positive_writer.write(data_to_write)
+                elif answer_group == 0 and pred_group == 1:
+                    # False Positive
+                    if sample_with_probability(false_positive_sampling_rate):
+                        data_sample = data.tolist()[index_in_batch]
+                        data_histogram = np.bincount(data_sample, minlength=256).tolist()
+                        data_std = [np.std(data_histogram)]
+                        data_to_write = [data_sample, data_histogram, data_std]
+                        test_false_positive_writer.write(data_to_write)
+                else:
+                    # False Negative
+                    if sample_with_probability(false_negative_sampling_rate):
+                        data_sample = data.tolist()[index_in_batch]
+                        data_histogram = np.bincount(data_sample, minlength=256).tolist()
+                        data_std = [np.std(data_histogram)]
+                        data_to_write = [data_sample, data_histogram, data_std]
+                        test_false_negative_writer.write(data_to_write)
+
+            index_in_batch += 1
+
         progress_bar(step, max_test_step)
-    test_end_time = time.time()
 
     print("\nTesting Result")
     print("Percentage:")
@@ -156,11 +213,12 @@ with tf.Session() as sess:
     correct_count = 0
     for i in range(num_groups):
         correct_count += accuracy_table[i][i]
-    print("Accuracy: {:>6.2f}%\n".format(correct_count / (num_fragments_per_csv * num_test_files) * 100))
+    print("Accuracy: {:>6.2f}%\n".format(correct_count / num_test_files * 100))
 
-    elapsed_time = test_end_time - test_start_time
     print("Elapsed Time: {:>6.5f} sec in total, {:.2e} sec/fragment\n"
-          .format(elapsed_time, elapsed_time / num_validation_files))
+          .format(timer.time(), timer.time() / num_test_files))
+
+    timer.reset()
 
     coord.request_stop()
     coord.join(threads)
