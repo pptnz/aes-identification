@@ -8,7 +8,7 @@ input_dimension = settings.read("data_info", "input_dimension")
 num_groups = settings.read("data_info", "num_groups")
 data_type = eval(settings.read("hyperparameters", "data_type"))
 
-bfd_casted = tf.map_fn(lambda t: tf.histogram_fixed_width(t, [0.0, 256.0], nbins=256, dtype=data_type),
+bfd_casted = tf.map_fn(lambda t: tf.cast(tf.histogram_fixed_width(t, [0.0, 256.0], nbins=256), tf.float32),
                        input_tensor,
                        dtype=data_type)
 bfd_reshaped = tf.reshape(bfd_casted, [-1, 16, 16, 1])
