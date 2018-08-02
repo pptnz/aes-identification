@@ -2,12 +2,12 @@
 # encrypt, decrypt from https://eli.thegreenplace.net/2010/06/25/aes-encryption-of-files-in-python-with-pycrypto
 # pad, unpad from https://gist.github.com/dokenzy/7b64238424175742a8a1
 
-from Crypto.Cipher import AES
+from Crypto.Cipher import Blowfish
 
 
 class Encryptor:
-    block_size = 16
-    initial_vector = block_size * '\x00'
+    block_size = Blowfish.block_size
+    initial_vector = b'\x00' * block_size
 
     @staticmethod
     def pad(plain_text):
@@ -23,12 +23,12 @@ class Encryptor:
 
     @staticmethod
     def encrypt(key, plain_text):
-        encryptor = AES.new(key, AES.MODE_CBC, Encryptor.initial_vector)
+        encryptor = Blowfish.new(key, Blowfish.MODE_CBC, Encryptor.initial_vector)
         cipher_text = encryptor.encrypt(Encryptor.pad(plain_text))
         return cipher_text
 
     @staticmethod
     def decrypt(key, cipher_text):
-        decryptor = AES.new(key, AES.MODE_CBC, Encryptor.initial_vector)
+        decryptor = Blowfish.new(key, Blowfish.MODE_CBC, Encryptor.initial_vector)
         plain_text = Encryptor.unpad(decryptor.decrypt(cipher_text))
         return plain_text
