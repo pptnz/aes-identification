@@ -1,4 +1,4 @@
-from aes_encryptor import AESEncryptor
+from encryptor import Encryptor
 import os
 
 
@@ -15,10 +15,10 @@ class File:
             with open(destination, "wb") as destination_file:
                 with open(self.file_location, "rb") as original_file:
                     plain_text = original_file.read()
-                    cipher_text = AESEncryptor.encrypt(key, plain_text)
+                    cipher_text = Encryptor.encrypt(key, plain_text)
                     destination_file.write(cipher_text)
 
-            self.file_location = destination
+            # self.file_location = destination
         except OSError:
             pass
 
@@ -30,8 +30,8 @@ class File:
         with open(destination, "wb") as destination_file:
             with open(self.file_location, "rb") as original_file:
                 cipher_text = original_file.read()
-                plain_text = AESEncryptor.decrypt(key, cipher_text)
+                plain_text = Encryptor.decrypt(key, cipher_text)
                 destination_file.write(plain_text)
 
-        self.file_location = destination
+        # self.file_location = destination
 

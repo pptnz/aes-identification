@@ -5,13 +5,13 @@
 from Crypto.Cipher import AES
 
 
-class AESEncryptor:
+class Encryptor:
     block_size = 16
     initial_vector = block_size * '\x00'
 
     @staticmethod
     def pad(plain_text):
-        padding_length = AESEncryptor.block_size - (len(plain_text) % AESEncryptor.block_size)
+        padding_length = Encryptor.block_size - (len(plain_text) % Encryptor.block_size)
         padding = padding_length * chr(padding_length)
         padding_message = padding.encode()
         return plain_text + padding_message
@@ -23,12 +23,12 @@ class AESEncryptor:
 
     @staticmethod
     def encrypt(key, plain_text):
-        encryptor = AES.new(key, AES.MODE_CBC, AESEncryptor.initial_vector)
-        cipher_text = encryptor.encrypt(AESEncryptor.pad(plain_text))
+        encryptor = AES.new(key, AES.MODE_CBC, Encryptor.initial_vector)
+        cipher_text = encryptor.encrypt(Encryptor.pad(plain_text))
         return cipher_text
 
     @staticmethod
     def decrypt(key, cipher_text):
-        decryptor = AES.new(key, AES.MODE_CBC, AESEncryptor.initial_vector)
-        plain_text = AESEncryptor.unpad(decryptor.decrypt(cipher_text))
+        decryptor = AES.new(key, AES.MODE_CBC, Encryptor.initial_vector)
+        plain_text = Encryptor.unpad(decryptor.decrypt(cipher_text))
         return plain_text
