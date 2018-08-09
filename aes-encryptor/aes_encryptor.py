@@ -6,7 +6,7 @@ from Crypto.Cipher import AES
 
 
 class AESEncryptor:
-    block_size = 16
+    block_size = AES.block_size
     initial_vector = block_size * '\x00'
 
     @staticmethod
