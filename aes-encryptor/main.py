@@ -10,9 +10,13 @@ def main():
     if choice == 0:
         directory = input("Directory to encrypt files: ")
         output_directory = input("Directory to save encrypted files: ")
-        key = input("Input key of length 32 (leave empty to use random key for each file): ")
-        if len(key) != 0 and len(key) != 32:
-            print("Wrong key size for AES-256!")
+        key_length = int(input("Input key length: "))
+        if key_length <= 0:
+            print("Wrong key length!")
+            exit(-1)
+        key = input("Input key of length {} (leave empty to use random key for each file): ".format(key_length))
+        if len(key) != 0 and len(key) != key_length:
+            print("Wrong key size!")
             exit(-1)
 
         if not os.path.exists(output_directory):
@@ -23,7 +27,7 @@ def main():
         num_files = len(files)
         files_count = 1
 
-        if len(key) == 32:
+        if len(key) == key_length:
             for filename in files:
                 file = File(filename, directory=directory)
                 file.encrypt(key, filename + ".encrypted", directory=output_directory)
@@ -34,7 +38,7 @@ def main():
             for filename in files:
                 file = File(filename, directory=directory)
                 key = ""
-                for _ in range(32):
+                for _ in range(key_length):
                     key += random.choice(string.ascii_letters + string.digits + string.punctuation)
                 file.encrypt(key, filename + ".encrypted", directory=output_directory)
                 print_progress(files_count, num_files)
@@ -43,9 +47,13 @@ def main():
     elif choice == 1:
         directory = input("Directory to decrypt files: ")
         output_directory = input("Directory to save decrypted files: ")
-        key = input("Input key of length 32: ")
-        if len(key) != 32:
-            print("Wrong key size for AES-256!")
+        key_length = int(input("Input key length: "))
+        if key_length <= 0:
+            print("Wrong key length!")
+            exit(-1)
+        key = input("Input key of length {}: ".format(key_length))
+        if len(key) != key_length:
+            print("Wrong key size!")
             exit(-1)
 
         if not os.path.exists(output_directory):
