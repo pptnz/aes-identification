@@ -1,0 +1,26 @@
+{
+  "train": {
+    "plain": "/home/jonghoon/data/train_plain/",
+    "encrypted": "/home/jonghoon/data/train_encrypted/"
+  },
+
+  "test": {
+    "plain": "/home/jonghoon/data/test_plain/",
+    "encrypted": "/home/jonghoon/data/test_encrypted/"
+  },
+
+  "result": {
+    "train": "/home/jonghoon/new_lmdb/train",
+    "test": "/home/jonghoon/new_lmdb/test"
+  },
+
+  "num_fragments_per_type": {
+    "train": 50000,
+    "test": 5000
+  },
+
+  "skip_test_plain": true,
+
+  "batch_size": 1000,
+  "fragment_size": 4096
+}
