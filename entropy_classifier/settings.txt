@@ -1,5 +1,5 @@
-/Users/barber/Downloads/plain/
-/Users/barber/Downloads/encrypted/
+/home/user/data/plain/
+/home/user/data/encrypted/
+10000
 -1
-0
 4096
