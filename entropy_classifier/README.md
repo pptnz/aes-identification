@@ -17,8 +17,8 @@ $ make
 ## 3. Change Settings
 Change settings at `settings.txt` file.
 ```
-line 1: /path/to/directory/that/contains/plain/files/            <- Trailing separator is mandatory. Directory must exist!
-line 2: /path/to/directory/that/contains/encrypted/files/        <- Trailing separator is mandatory. Directory must exist!!
+line 1: /path/to/directory/that/contains/plain/files/      <- Trailing separator is mandatory. Directory must exist!
+line 2: /path/to/directory/that/contains/encrypted/files/  <- Trailing separator is mandatory. Directory must exist!!
 line 3: Number of plain fragments to test. 0 not to test, -1 to test as much as possible.
 line 4: Number of encrypted fragments to test. 0 not to test, -1 to test as much as possible.
 line 5: Size of fragment in bytes
