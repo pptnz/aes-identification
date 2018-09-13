@@ -1,0 +1,5 @@
+/Users/barber/Downloads/plain/
+/Users/barber/Downloads/encrypted/
+-1
+0
+4096
