@@ -19,30 +19,48 @@ def main():
             print("Wrong key size!")
             exit(-1)
 
-        if not os.path.exists(output_directory):
-            os.makedirs(output_directory)
+        num_files = 0
+        for _, _, file_names in os.walk(directory):
+            num_files += len(list(filter(lambda filename: not filename.startswith("."), file_names)))
 
-        files = list(filter(lambda filename: (not filename.startswith(".")) and ("." in filename),
-                            os.listdir(directory)))
-        num_files = len(files)
         files_count = 1
 
         if len(key) == key_length:
-            for filename in files:
-                file = File(filename, directory=directory)
-                file.encrypt(key, filename + ".encrypted", directory=output_directory)
-                print_progress(files_count, num_files)
-                files_count += 1
+            for directory_path, directory_names, file_names in os.walk(directory):
+                # Compute Destination Directory
+                destination_directory = directory_path.replace(directory, output_directory)
+                if not os.path.exists(destination_directory):
+                    os.makedirs(destination_directory)
+
+                # Work with files
+                for file_name in file_names:
+                    if file_name.startswith("."):
+                        continue
+
+                    file = File(file_name, directory=directory_path)
+                    file.encrypt(key, file_name + ".encrypted", directory=destination_directory)
+                    print_progress(files_count, num_files)
+                    files_count += 1
 
         else:
-            for filename in files:
-                file = File(filename, directory=directory)
-                key = ""
-                for _ in range(key_length):
-                    key += random.choice(string.ascii_letters + string.digits + string.punctuation)
-                file.encrypt(key, filename + ".encrypted", directory=output_directory)
-                print_progress(files_count, num_files)
-                files_count += 1
+            for directory_path, directory_names, file_names in os.walk(directory):
+                # Compute Destination Directory
+                destination_directory = directory_path.replace(directory, output_directory)
+                if not os.path.exists(destination_directory):
+                    os.makedirs(destination_directory)
+
+                # Work with files
+                for file_name in file_names:
+                    if file_name.startswith("."):
+                        continue
+
+                    file = File(file_name, directory=directory_path)
+                    key = ""
+                    for _ in range(key_length):
+                        key += random.choice(string.ascii_letters + string.digits + string.punctuation)
+                    file.encrypt(key, file_name + ".encrypted", directory=destination_directory)
+                    print_progress(files_count, num_files)
+                    files_count += 1
 
     elif choice == 1:
         directory = input("Directory to decrypt files: ")
@@ -56,21 +74,27 @@ def main():
             print("Wrong key size!")
             exit(-1)
 
-        if not os.path.exists(output_directory):
-            os.makedirs(output_directory)
+        num_files = 0
+        for _, _, file_names in os.walk(directory):
+            num_files += len(list(filter(lambda filename: not filename.startswith("."), file_names)))
 
-        files = list(filter(lambda filename: (not filename.startswith(".")) and ("." in filename),
-                            os.listdir(directory)))
-        num_files = len(files)
         files_count = 1
 
-        for filename in files:
-            if filename.startswith("."):
-                continue
-            file = File(filename, directory=directory)
-            file.decrypt(key, filename.replace(".encrypted", ""), directory=output_directory)
-            print_progress(files_count, num_files)
-            files_count += 1
+        for directory_path, directory_names, file_names in os.walk(directory):
+            # Compute Destination Directory
+            destination_directory = directory_path.replace(directory, output_directory)
+            if not os.path.exists(destination_directory):
+                os.makedirs(destination_directory)
+
+            # Work with files
+            for file_name in file_names:
+                if file_name.startswith("."):
+                    continue
+
+                file = File(file_name, directory=directory_path)
+                file.decrypt(key, file_name.replace(".encrypted", ""), directory=destination_directory)
+                print_progress(files_count, num_files)
+                files_count += 1
 
 
 if __name__ == '__main__':
