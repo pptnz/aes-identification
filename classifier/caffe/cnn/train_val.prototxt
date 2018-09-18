@@ -7,11 +7,8 @@ layer {
   include {
     phase: TRAIN
   }
-  transform_param {
-    mean_value: 15.9547
-  }
   data_param {
-    source: "/home/jonghoon/lmdb/file-lmdb/train"
+    source: "/home/jonghoon/lmdb/file_lmdb/train"
     batch_size: 1000
     backend: LMDB
   }
@@ -24,11 +21,8 @@ layer {
   include {
     phase: TEST
   }
-  transform_param {
-    mean_value: 15.9547
-  }
   data_param {
-    source: "/home/jonghoon/lmdb/file-lmdb/test"
+    source: "/home/jonghoon/lmdb/file_lmdb/test"
     batch_size: 1000
     backend: LMDB
   }
