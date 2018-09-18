@@ -3,6 +3,7 @@ from print_progress import print_progress
 import os
 import random
 import string
+import shutil
 
 
 def main():
@@ -18,6 +19,9 @@ def main():
         if len(key) != 0 and len(key) != key_length:
             print("Wrong key size!")
             exit(-1)
+
+        quarantine_path = os.path.join(directory, "toolarge")
+        os.makedirs(quarantine_path)
 
         num_files = 0
         for _, _, file_names in os.walk(directory):
@@ -38,7 +42,14 @@ def main():
                         continue
 
                     file = File(file_name, directory=directory_path)
-                    file.encrypt(key, file_name + ".encrypted", directory=destination_directory)
+                    try:
+                        file.encrypt(key, file_name + ".encrypted", directory=destination_directory)
+                    except:
+                        file_quarantine_path = os.path.join(quarantine_path, directory_path)
+                        if not os.path.exists(file_quarantine_path):
+                            os.makedirs(file_quarantine_path)
+                        shutil.move(os.path.join(directory_path, file_name),
+                                    os.path.join(file_quarantine_path, file_name))
                     print_progress(files_count, num_files)
                     files_count += 1
 
@@ -58,9 +69,23 @@ def main():
                     key = ""
                     for _ in range(key_length):
                         key += random.choice(string.ascii_letters + string.digits + string.punctuation)
-                    file.encrypt(key, file_name + ".encrypted", directory=destination_directory)
+                    try:
+                        file.encrypt(key, file_name + ".encrypted", directory=destination_directory)
+                    except:
+                        file_quarantine_path = os.path.join(quarantine_path, directory_path)
+                        if not os.path.exists(file_quarantine_path):
+                            os.makedirs(file_quarantine_path)
+                        shutil.move(os.path.join(directory_path, file_name),
+                                    os.path.join(file_quarantine_path, file_name))
                     print_progress(files_count, num_files)
                     files_count += 1
+                    print_progress(files_count, num_files)
+                    files_count += 1
+
+        os.removedirs(os.path.join(output_directory, "toolarge"))
+        quarantined = os.listdir(quarantine_path)
+        if len(list(filter(lambda file_name: not file_name.startswith("."), quarantined))) == 0:
+            os.removedirs(quarantine_path)
 
     elif choice == 1:
         directory = input("Directory to decrypt files: ")
