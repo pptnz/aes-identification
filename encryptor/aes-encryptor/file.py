@@ -1,4 +1,4 @@
-from aes_encryptor import AESEncryptor
+from encryptor import AESEncryptor
 import os
 
 
