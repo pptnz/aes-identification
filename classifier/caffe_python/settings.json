@@ -1,0 +1,16 @@
+{
+  "input": "./data/media.file",
+
+  "fragment_size": 4096,
+
+  "entropy_checker": {
+    "frequency_threshold": 55,
+    "entropy_threshold": 16700
+  },
+
+  "cnn_checker": {
+    "model_path": "./caffemodel/deploy.prototxt",
+    "weight_path": "./caffemodel/model.caffemodel",
+    "encryption_threshold": 0.5
+  }
+}

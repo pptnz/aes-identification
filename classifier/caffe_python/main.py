@@ -1,74 +1,65 @@
-import caffe
-from timer import Timer
-from compute_bfd import compute_bfd
-from fragment import Fragment
+from data_reader import DataReader
+from encryption_checker import EncryptionChecker
+from result_writer import ResultWriter
+from helper_functions import read_settings, compute_bfd, get_file_size, print_progress
 
 
 def main():
-    # Setup Fragment
-    file_types = ["exe", "html", "hwp", "jpg", "mp3", "pdf", "png"]
-    file_groups = {0: "exe",
-                   1: "html",
-                   2: "hwp",
-                   3: "jpg",
-                   4: "mp3",
-                   5: "pdf",
-                   6: "png"}
-    directories = ["/home/jonghoon/Desktop/datasets/data/fti_data/test/exe",
-                   "/home/jonghoon/Desktop/datasets/data/fti_data/test/html",
-                   "/home/jonghoon/Desktop/datasets/data/fti_data/test/hwp",
-                   "/home/jonghoon/Desktop/datasets/data/fti_data/test/jpg",
-                   "/home/jonghoon/Desktop/datasets/data/fti_data/test/mp3",
-                   "/home/jonghoon/Desktop/datasets/data/fti_data/test/pdf",
-                   "/home/jonghoon/Desktop/datasets/data/fti_data/test/png"]
-    num_fragments = 10000
-    fragment_getter = Fragment(num_fragments=num_fragments, file_types=file_types, directories=directories, fragment_size=4096)
+    # Read Settings value.
+    # Non-media input and output path settings
+    input_path = read_settings("./settings.json", "input")
 
-    # Prepare caffe network
-    net = caffe.Net("./deploy.prototxt", "./model.caffemodel", caffe.TEST)
-    net.blobs["data"].reshape(1, 1, 256, 1)
+    # Entropy-Checker settings
+    frequency_threshold = read_settings("./settings.json", "entropy_checker", "frequency_threshold")
+    entropy_threshold = read_settings("./settings.json", "entropy_checker", "entropy_threshold")
 
-    # Setup timer
-    timer = Timer(name="Elapsed Time")
+    # CNN-Checker settings
+    model_path = read_settings("./settings.json", "cnn_checker", "model_path")
+    weight_path = read_settings("./settings.json", "cnn_checker", "weight_path")
+    encryption_threshold = read_settings("./settings.json", "cnn_checker", "encryption_threshold")
 
-    # Result checker
-    total_fragments = 0
-    correct_fragments = 0
-    classification_table = dict()
-    for type1 in file_types:
-        classification_table[type1] = dict()
-        for type2 in file_types:
-            classification_table[type1][type2] = 0
+    # Fragment size settings
+    fragment_size = read_settings("./settings.json", "fragment_size")
 
-    # Classify
-    fragment, file_type = fragment_getter.get_fragment()
-    while fragment is not None:
-        timer.start()
-        net.blobs["data"].data[...] = compute_bfd(fragment)
-        result = net.forward()
-        prob = result["prob"].tolist()[0]
-        classified_type = file_groups[prob.index(max(prob))]
-        timer.stop()
+    # Compute the number of fragments to process
+    fragments_count = int(get_file_size(file_path=input_path) / fragment_size)
 
-        total_fragments += 1
-        if classified_type == file_type:
-            correct_fragments += 1
-        classification_table[file_type][classified_type] += 1
+    # Create DataReader
+    data_reader = DataReader(path=input_path, read_size=fragment_size)
 
-        fragment, file_type = fragment_getter.get_fragment()
+    # Create and Setup EncryptionChecker
+    encryption_checker = EncryptionChecker()
+    encryption_checker.setup_entropy_checker(frequency_threshold=frequency_threshold,
+                                             entropy_threshold=entropy_threshold)
+    encryption_checker.setup_cnn_checker(model_path=model_path,
+                                         weight_path=weight_path,
+                                         encryption_threshold=encryption_threshold)
     
-    print()
-    print("Accuracy: {:.2f}%".format(correct_fragments / total_fragments * 100))
-    print("Accuracy Table:")
-    print("\t" + "\t".join(file_types))
-    for type1 in file_types:
-        print("{}\t".format(type1), end="")
-        for type2 in file_types:
-            print("{:3.2f}%".format(classification_table[type1][type2] / num_fragments * 100), end="\t")
-        print()
+    # Process Non-media data
+    print("\nProcessing...")
+    processed_count = 0
+    fragment = data_reader.read()
+    while fragment is not None:
+        # Compute bfd
+        bfd = compute_bfd(fragment=fragment)
+        
+        # Check the encryption by entropy
+        entropy_result = encryption_checker.check_by_entropy(bfd=bfd)
+        
+        # Check the encryption by cnn
+        cnn_result = encryption_checker.check_by_cnn(bfd=bfd)
 
-    timer.print()
+        # TODO: Count result
+
+        # Print progress
+        processed_count += 1
+        print_progress(processed_count, fragments_count)
+        
+        # Fetch next file fragment
+        fragment = data_reader.read()
+
+    # TODO: Print Result
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
