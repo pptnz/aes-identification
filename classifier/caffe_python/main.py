@@ -58,7 +58,7 @@ def main():
         cnn_result = encryption_checker.check_by_cnn(bfd=bfd)
         total_result_counter.count(true_type=0, identified_type=cnn_result)
 
-        if entropy_result == 0:
+        if entropy_result == 1:
             cnn_result_counter.count(true_type=0, identified_type=cnn_result)
 
         # Print progress
@@ -84,7 +84,7 @@ def main():
         cnn_result = encryption_checker.check_by_cnn(bfd=bfd)
         total_result_counter.count(true_type=1, identified_type=cnn_result)
 
-        if entropy_result == 0:
+        if entropy_result == 1:
             cnn_result_counter.count(true_type=1, identified_type=cnn_result)
         
         # Print progress
