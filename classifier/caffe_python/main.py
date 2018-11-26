@@ -6,8 +6,8 @@ from result_counter import ResultCounter
 def main():
     # Read Settings value.
     # Non-media input and output path settings
-    plain_input_path = read_settings("./settings.json", "input")
-    encrypted_input_path = read_settings("./settings.json", "input")
+    plain_input_path = read_settings("./settings.json", "input", "plain")
+    encrypted_input_path = read_settings("./settings.json", "input", "encrypted")
 
     # Entropy-Checker settings
     frequency_threshold = read_settings("./settings.json", "entropy_checker", "frequency_threshold")
@@ -40,6 +40,7 @@ def main():
     # Create ResultCounter
     entropy_result_counter = ResultCounter()
     cnn_result_counter = ResultCounter()
+    total_result_counter = ResultCounter()
     
     # Process Non-media data
     print("\nProcessing Plain Fragments...")
@@ -52,10 +53,13 @@ def main():
         # Check the encryption by entropy
         entropy_result = encryption_checker.check_by_entropy(bfd=bfd)
         entropy_result_counter.count(true_type=0, identified_type=entropy_result)
-        
+    
         # Check the encryption by cnn
         cnn_result = encryption_checker.check_by_cnn(bfd=bfd)
-        cnn_result_counter.count(true_type=0, identified_type=cnn_result)
+        total_result_counter.count(true_type=0, identified_type=cnn_result)
+
+        if entropy_result == 0:
+            cnn_result_counter.count(true_type=0, identified_type=cnn_result)
 
         # Print progress
         processed_count += 1
@@ -74,12 +78,15 @@ def main():
 
         # Check the encryption by entropy
         entropy_result = encryption_checker.check_by_entropy(bfd=bfd)
-        entropy_result_counter.count(true_type=0, identified_type=entropy_result)
+        entropy_result_counter.count(true_type=1, identified_type=entropy_result)
 
         # Check the encryption by cnn
         cnn_result = encryption_checker.check_by_cnn(bfd=bfd)
-        cnn_result_counter.count(true_type=0, identified_type=cnn_result)
+        total_result_counter.count(true_type=1, identified_type=cnn_result)
 
+        if entropy_result == 0:
+            cnn_result_counter.count(true_type=1, identified_type=cnn_result)
+        
         # Print progress
         processed_count += 1
         print_progress(processed_count, encrypted_fragments_count)
@@ -93,9 +100,13 @@ def main():
     entropy_result_counter.print_count()
     entropy_result_counter.print_prob()
 
-    print("\nCNN Result:")
+    print("\nCNN (Entropy Failed Only) Result:")
     cnn_result_counter.print_count()
     cnn_result_counter.print_prob()
+
+    print("\nCNN (Total) Result:")
+    total_result_counter.print_count()
+    total_result_counter.print_prob()
 
 
 if __name__ == '__main__':

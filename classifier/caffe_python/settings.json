@@ -1,7 +1,7 @@
 {
   "input": {
-    "plain": "/home/jonghoon/Desktop/datasets/data/rpssd_data/plain/aes256/install.dat",
-    "encrypted": "/home/jonghoon/Desktop/datasets/data/rpssd_data/encrypted/aes256/install.dat"
+    "plain": "/home/jonghoon/Desktop/datasets/data/rpssd_data/plain/install.dat",
+    "encrypted": "/home/jonghoon/Desktop/datasets/data/rpssd_data/encrypted/aes256/install.dat.encrypted"
   },
 
   "fragment_size": 4096,
