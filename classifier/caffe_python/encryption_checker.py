@@ -38,11 +38,6 @@ class EncryptionChecker:
                                 Note that entropy(bfd) = sum(n * log(n)), not sum(-p * log(p)).
         """
         self.frequency_threshold = frequency_threshold
-        self.entropy_threshold = entropy_threshold
-
-        self.entropy_lookup_table = [0 for _ in range(frequency_threshold)]
-        for i in range(1, frequency_threshold):
-            self.entropy_lookup_table[i] = i * math.log2(i)
 
     def setup_cnn_checker(self, model_path, weight_path, encryption_threshold):
         """
@@ -66,12 +61,6 @@ class EncryptionChecker:
         """
         # Check the frequency
         if any(bfd_value >= self.frequency_threshold for bfd_value in bfd):
-            # Plain Fragment
-            return 0
-
-        # Check the entropy
-        entropy = sum(self.entropy_lookup_table[bfd_value] for bfd_value in bfd)
-        if entropy >= self.entropy_threshold:
             # Plain Fragment
             return 0
 
